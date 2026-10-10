@@ -1,0 +1,455 @@
+% ------------------------------------------------------------------
+% BORRADOR 0.1  —  planteamiento del problema + marco teorico preliminar
+% Linea: SFQED / creacion de pares en campos electromagneticos coherentes
+% Idioma del manuscrito: INGLES (idioma de la disciplina, no es opcion).
+%
+% REGLAS DE ESTE ARCHIVO (se cumplen o el paper no sale del laboratorio):
+%   1) CERO meta-lenguaje interno (nada de actas, sellos, codigos, numeraciones
+%      propias). El revisor cierra el manuscrito en diez segundos si lo ve.
+%   2) CERO constantes importadas. Toda cifra se deriva aqui de primeros
+%      principios o se cita de la literatura en refs.bib. Nada entra por
+%      "lo dice el corpus".
+%   3) Sistema de unidades declarado en cada ecuacion (naturales, hbar=c=1,
+%      salvo donde se diga lo contrario).
+% ------------------------------------------------------------------
+\documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\begin{document}
+
+\title{Boundary-condition geometry for energy-minimal Schwinger pair creation
+in coherent electromagnetic fields}
+
+\author{J. Alexis Rom\'an Mart\'inez}
+\affiliation{Independent Researcher, Platino Labs}
+
+\date{\today}
+
+\begin{abstract}
+Direct pair creation from the quantum vacuum requires electromagnetic fields
+comparable to the Sauter--Schwinger critical field
+$E_{\mathrm{cr}}=m_e^2c^3/(e\hbar)\simeq1.32\times10^{18}\,\mathrm{V\,m^{-1}}$,
+five to six orders of magnitude above present laser intensities. Because the
+local pair-production rate is a function of the two Lorentz invariants of the
+field, the only controllable levers at fixed total energy are the geometry and
+the coherence of the field superposition. We cast the problem as a variational
+one: minimise the total input pulse energy subject to a prescribed pair yield.
+Three statements are established analytically. (i)~A single plane wave is a
+null field, $\mathcal{F}=\mathcal{G}=0$, and creates no pairs; pair creation is
+therefore a property of the \emph{collision} of fields, not of an individual
+pulse. (ii)~For $N$ phase-matched beams focused into a common volume at fixed
+total energy, the peak field scales as $\sqrt{N}$, so the energy required to
+reach a given invariant scales as $1/N$, under explicitly stated assumptions.
+(iii)~The residual freedom is polarisation and temporal structure, which decide
+whether the strong-field region is oscillatory (counter-propagating linear
+standing wave) or quiescent (co-rotating circular collision); the quiescent
+configuration is preferable for adiabatic pair creation. We state the boundary
+conditions implied by phase matching and propose a falsifiable one- and
+two-dimensional particle-in-cell test.
+\end{abstract}
+
+\maketitle
+
+% ==================================================================
+\section{Introduction}
+% ==================================================================
+
+The vacuum of quantum electrodynamics is not an empty stage. It is a
+polarisable medium, and it becomes unstable when the applied electric field
+approaches
+\begin{equation}
+E_{\mathrm{cr}}=\frac{m_e^2c^3}{e\hbar}\simeq1.32\times10^{18}\ \mathrm{V\,m^{-1}},
+\label{eq:Ecr}
+\end{equation}
+the field defined in Eq.~\eqref{eq:Ecr}, for which the work performed over
+one reduced Compton wavelength equals the rest energy of an
+electron--positron pair~\cite{Sauter1931,Schwinger1951}.
+At and beyond $E_{\mathrm{cr}}$ the tunnelling rate out of the vacuum is
+non-perturbative, and a static electric field decays by spontaneously emitting
+pairs~\cite{HeisenbergEuler1936}. The corresponding focal intensity,
+of order $10^{29}\,\mathrm{W\,cm^{-2}}$, is five to six orders of magnitude
+above what present-day laser facilities deliver
+($10^{22}$--$10^{23}\,\mathrm{W\,cm^{-2}}$)~\cite{DiPiazza2012}.
+
+Three routes are pursued to close that gap. The first is brute force: more
+energy on target. The second is \emph{dynamically assisted} Schwinger
+production, in which a high-energy seed particle or photon supplies the energy
+while the field supplies the non-perturbative character of the
+process~\cite{Fedotov2023}; its beam--beam variant, in which two real photons
+annihilate into a pair, is Breit--Wheeler production~\cite{BreitWheeler1934}.
+The third --- the subject of this work --- is \emph{geometry and coherence}: to
+arrange the electromagnetic field so that a target invariant is reached with
+the smallest possible total pulse energy.
+
+This last route rests on a structural fact. The local pair-production rate in
+a slowly varying field depends on the field only through its two Lorentz
+invariants~\cite{Schwinger1951},
+\begin{equation}
+\mathcal{F}=\tfrac12\!\left(\mathbf{E}^2-\mathbf{B}^2\right),
+\qquad
+\mathcal{G}=\mathbf{E}\cdot\mathbf{B}
+\qquad (\hbar=c=1),
+\label{eq:invariants}
+\end{equation}
+or, equivalently, through the two rest-frame field magnitudes $a,b$ they fix
+(App.~\ref{app:eigen}). A single plane wave satisfies
+$|\mathbf{E}|=|\mathbf{B}|$ and $\mathbf{E}\perp\mathbf{B}$, hence
+$\mathcal{F}=\mathcal{G}=0$: it is a \emph{null field}, and it cannot create
+pairs however intense it becomes. Pair creation is therefore not a property of
+a pulse but of a \emph{superposition} of non-collinear fields. Geometry is not
+a refinement of the problem; it is its mechanism.
+
+The remainder of this paper is organised as follows.
+Sec.~\ref{sec:framework} fixes the framework: invariants, rest-frame fields,
+the effective action, and the variational statement of the optimisation.
+Sec.~\ref{sec:geometry} derives the analytic nucleus: the null-field lemma,
+the invariants of a two-beam collision in the linear and circular
+configurations, the $1/N$ energy scaling of coherent $N$-beam focusing, and
+the boundary conditions imposed by phase matching. Sec.~\ref{sec:discussion}
+states what would falsify the scaling, and outlines the numerical test.
+Throughout, units are natural ($\hbar=c=1$, Heaviside--Lorentz) unless a
+SI value is explicitly written; the metric signature is $(+,-,-,-)$.
+
+% ==================================================================
+\section{Analytical framework}
+\label{sec:framework}
+% ==================================================================
+
+\subsection{Field tensor, invariants and rest-frame fields}
+
+Let $F^{\mu\nu}=\partial^\mu A^\nu-\partial^\nu A^\mu$ be the field-strength
+tensor and ${}^\star F^{\mu\nu}=\tfrac12\varepsilon^{\mu\nu\rho\sigma}
+F_{\rho\sigma}$ its dual. The two independent Lorentz scalars are
+\begin{equation}
+\begin{aligned}
+\mathcal{F}&=-\tfrac14 F_{\mu\nu}F^{\mu\nu}
+=\tfrac12\!\left(\mathbf{E}^2-\mathbf{B}^2\right),\\
+\mathcal{G}&=-\tfrac14 F_{\mu\nu}{}^\star F^{\mu\nu}=\mathbf{E}\cdot\mathbf{B}.
+\end{aligned}
+\label{eq:invariants2}
+\end{equation}
+They determine the two eigenvalues of $F$, i.e.\ the field magnitudes seen in
+the frame in which the field is maximally ``electric'' or maximally
+``magnetic''. Defining
+\begin{equation}
+a=\sqrt{\sqrt{\mathcal{F}^2+\mathcal{G}^2}+\mathcal{F}},
+\qquad
+b=\sqrt{\sqrt{\mathcal{F}^2+\mathcal{G}^2}-\mathcal{F}},
+\label{eq:ab}
+\end{equation}
+one has
+\begin{equation}
+a^2-b^2=2\mathcal{F},\qquad a^2b^2=\mathcal{G}^2,\qquad
+a^2+b^2=2\sqrt{\mathcal{F}^2+\mathcal{G}^2}.
+\label{eq:abrel}
+\end{equation}
+There always exists a Lorentz frame in which $\mathbf{E}\parallel\mathbf{B}$,
+with $|\mathbf{E}|=a$, $|\mathbf{B}|=b$. In particular, when
+$\mathcal{G}=0$ and $\mathcal{F}>0$ the field is purely electric in some frame,
+with $|\mathbf{E}|=a=\sqrt{2\mathcal{F}}$ and $\mathbf{B}=0$. The quantity
+$a$ is the field that governs the tunnelling rate, and it --- not the lab
+intensity --- is the object the geometry must maximise.
+A derivation is given in App.~\ref{app:eigen}.
+
+\subsection{Effective action and the pair-creation yield}
+
+The vacuum persists as a polarisable medium through the one-loop correction to
+the Maxwell action. To fourth order in the field the Heisenberg--Euler
+Lagrangian reads~\cite{HeisenbergEuler1936}
+\begin{equation}
+\mathcal{L}_{\mathrm{EH}}
+=\frac{2\alpha^2}{45\,m_e^4}
+\left[\left(\mathbf{E}^2-\mathbf{B}^2\right)^2
++7\left(\mathbf{E}\cdot\mathbf{B}\right)^2\right],
+\label{eq:EH}
+\end{equation}
+The imaginary part of Eq.~\eqref{eq:EH}, continued to the appropriate
+configuration, gives the tunnelling rate out of the
+vacuum~\cite{Schwinger1951}. For a uniform electric
+field $E$ the rate per unit volume and time is
+\begin{equation}
+w(E)=\frac{(eE)^2}{4\pi^3}
+\sum_{n=1}^{\infty}\frac{1}{n^2}
+\exp\!\left(-\frac{n\pi m_e^2}{eE}\right)
+\qquad(\hbar=c=1),
+\label{eq:schwinger_rate}
+\end{equation}
+whose leading term is exponentially suppressed by $E_{\mathrm{cr}}/E$.
+For a slowly varying field the rate generalises through the \emph{locally
+constant field approximation} (LCFA): the local rate is
+$w=w(a(\mathbf{x},t))$, a function of the rest-frame field $a$ of
+Eq.~\eqref{eq:ab} evaluated pointwise. The number of pairs produced by a
+spacetime field configuration is then the yield functional
+\begin{equation}
+\mathcal{N}[\{A_i^\mu\}]
+=\int_{\Omega} d^4x\;
+w\!\left(a(\mathbf{x},t)\right),
+\qquad
+a = a\!\left(\mathcal{F},\mathcal{G}\right),
+\label{eq:yield}
+\end{equation}
+with the invariants $\mathcal{F},\mathcal{G}$ of Eq.~\eqref{eq:invariants}
+built from $F=\sum_i F_i(A_i)$ by the superposition of the individual beam
+potentials $A_i^\mu$ (valid in vacuum, below the pair-creation threshold).
+
+\subsection{The variational problem}
+
+Let $N$ beams carry individual energies $\mathcal{E}_i$, and let
+$\mathcal{E}_{\mathrm{in}}=\sum_i\mathcal{E}_i$ be the total input energy.
+We pose the optimisation as
+\begin{equation}
+\boxed{\;
+\begin{aligned}
+&\min_{\{A_i^\mu\}}\ \mathcal{E}_{\mathrm{in}}=\sum_{i=1}^{N}\mathcal{E}_i,
+\quad\text{subject to}\\
+&\mathcal{N}[\{A_i^\mu\}]\ \ge\ \mathcal{N}_\ast,\;
+\partial_\mu F^{\mu\nu}=0
+\end{aligned}
+\;}
+\label{eq:variational}
+\end{equation}
+where $F=\sum_i F_i(A_i)$, and each $A_i^\mu$ is subject to the physical
+realisability constraints of the source (maximum focal intensity, pulse
+duration, and focal spot size). The geometry --- crossing angles, relative
+phases, polarisations and focal offsets --- is encoded entirely in the
+$\{A_i^\mu\}$; the pair-yield target $\mathcal{N}_\ast$ is fixed by the
+observational goal (single pair, a detectable signal, a cascade).
+Equation~\eqref{eq:variational} is the precise statement of ``reach the
+threshold with the least energy on target''.
+
+% ==================================================================
+\section{Pulse geometry and boundary conditions}
+\label{sec:geometry}
+% ==================================================================
+
+\subsection{A single plane wave is null (Lemma 1)}
+
+For a plane wave with wave vector $\mathbf{k}$ and unit vector
+$\hat{\mathbf{k}}=\mathbf{k}/|\mathbf{k}|$,
+$\mathbf{B}=\hat{\mathbf{k}}\times\mathbf{E}$ and
+$|\mathbf{E}|=|\mathbf{B}|$. Hence $\mathcal{G}=\mathbf{E}\cdot\mathbf{B}=0$
+and $\mathcal{F}=\tfrac12(|\mathbf{E}|^2-|\mathbf{B}|^2)=0$ identically, at
+every instant and every phase. By Eq.~\eqref{eq:yield} the yield vanishes:
+$w(a=0)=0$. An arbitrarily intense \emph{single} pulse creates no pairs from
+the vacuum. Pair creation requires the interference of at least two
+non-collinear fields.
+
+\subsection{Two counter-propagating beams (Lemma 2)}
+
+Consider two plane waves of equal amplitude $E_0$ and frequency $\omega$,
+propagating along $\pm\hat{\mathbf{z}}$ and focused into a common volume.
+
+\paragraph{(a) Linear, co-polarised.} Take both polarised along $\hat{\mathbf{x}}$.
+Writing $\omega t-kz$ and $\omega t+kz$ for the two phases, the superposition is
+\begin{equation}
+\mathbf{E}=2E_0\cos\omega t\,\cos kz\;\hat{\mathbf{x}},
+\qquad
+\mathbf{B}=2E_0\sin\omega t\,\sin kz\;\hat{\mathbf{y}} .
+\label{eq:lin_fields}
+\end{equation}
+The fields of Eq.~\eqref{eq:lin_fields} yield the invariants
+\begin{equation}
+\mathcal{F}=E_0^2\!\left(\cos 2\omega t+\cos 2kz\right),
+\qquad
+\mathcal{G}=0 ,
+\label{eq:lin_inv}
+\end{equation}
+since $\mathbf{E}\parallel\hat{\mathbf{x}}$ and
+$\mathbf{B}\parallel\hat{\mathbf{y}}$ are everywhere orthogonal. This is an
+oscillatory standing wave: $\mathcal{F}$ oscillates in time and changes sign.
+At its spatio-temporal antinodes, $\cos\omega t\cos kz=\pm1$, one has
+$|\mathbf{E}|=2E_0$, $\mathbf{B}=0$, and $\mathcal{F}=2E_0^2$: a pure-electric
+region at twice the single-beam amplitude. The field, however, passes through
+zero at the same location, and with it the yield.
+
+\paragraph{(b) Circular, co-rotating.} Take both waves circularly polarised
+with the same helicity. Then
+\begin{equation}
+\begin{aligned}
+\mathbf{E}&=2E_0\cos kz\,(\cos\omega t,\ \sin\omega t,\ 0),\\
+\mathbf{B}&=2E_0\sin kz\,(\cos\omega t,\ \sin\omega t,\ 0),
+\end{aligned}
+\label{eq:cp_fields}
+\end{equation}
+so that
+\begin{equation}
+\mathcal{F}=2E_0^2\cos 2kz,
+\qquad
+\mathcal{G}=2E_0^2\sin 2kz ,
+\label{eq:cp_inv}
+\end{equation}
+\emph{both independent of time}. In Eq.~\eqref{eq:cp_fields} the fields
+$\mathbf{E}$ and $\mathbf{B}$ are
+parallel, so $\mathcal{G}$ vanishes only on the planes $kz=n\pi/2$; the
+strong-field planes $kz=n\pi$ are pure electric, with $\mathcal{F}=2E_0^2$,
+$|\mathbf{E}|=2E_0$ and $\mathbf{B}=0$, and they persist. Moreover
+$\mathcal{F}^2+\mathcal{G}^2=4E_0^4$ everywhere, so the total rest-frame
+magnitude $\sqrt{a^2+b^2}=2E_0$ is spatially uniform, the configuration
+rotating from purely electric at $kz=n\pi$ to purely magnetic at
+$kz=(n+\tfrac12)\pi$. Where the linear configuration gives the same peak but a
+field that crosses zero twice per period, the co-rotating circular
+configuration gives a \emph{quiescent} strong field that is stationary in
+time. Since the tunnelling rate \eqref{eq:schwinger_rate} depends on the field
+magnitude and the adiabaticity ratio $\omega/(eE)$, a strong-field region that
+does not cross zero in time is preferable for generating pairs from the
+vacuum. The two temporal profiles are compared in
+Fig.~\ref{fig:invariants}(a). This is a discrete geometric boundary condition
+on the polarisation, stated in Sec.~\ref{sec:bc}.
+
+\subsection{Coherent $N$-beam focusing reduces the required energy (Proposition)}
+
+Let $N$ beams of equal amplitude $E_b$ be phase-matched at a common focus of
+fixed area $\Sigma$ and duration $\tau$, so that their fields add coherently:
+$E_{\mathrm{peak}}=N E_b$. For a beam of fixed $\Sigma,\tau$ the beam energy is
+$\mathcal{E}_b=\kappa\,E_b^{2}$ with a constant $\kappa$ depending only on
+$\Sigma$ and $\tau$. To reach a target peak field $E_\ast$,
+\begin{equation}
+\begin{aligned}
+E_b=\frac{E_\ast}{N}
+\quad\Longrightarrow\quad
+\mathcal{E}_{\mathrm{in}}&=N\mathcal{E}_b
+=N\kappa\!\left(\frac{E_\ast}{N}\right)^{2}\\
+&=\frac{\kappa E_\ast^{2}}{N}
+=\frac{\mathcal{E}_{\mathrm{ref}}}{N},
+\end{aligned}
+\label{eq:oneoverN}
+\end{equation}
+where $\mathcal{E}_{\mathrm{ref}}=\kappa E_\ast^{2}$ is the energy required
+with a single beam. Equivalently, at fixed total energy the peak field scales
+as $\sqrt{N}$ and the intensity as $N$. The total energy needed to reach a
+given invariant therefore falls as $1/N$ (Fig.~\ref{fig:invariants}(b)).
+Setting the target field to the critical value, $E_\ast=E_{\mathrm{cr}}$, the
+input energy required to reach the pair-creation threshold falls as $1/N$
+relative to the threshold of a single beam.
+
+This is the analytic core of the geometric route: distributing the same energy
+over more coherently combined beams is not a cosmetic change but a linear-in-$N$
+reduction of the energy required at the threshold. The assumptions are
+explicit and each is falsifiable: (i)~vacuum superposition,
+$F=\sum_i F_i$, valid below the pair-creation threshold; (ii)~perfect phase
+matching, i.e.\ path-length differences $\Delta L\ll\lambda$ across all beams;
+(iii)~a fixed, common focal volume $\Sigma\times\tau$; (iv)~no plasma formation
+during the rise, which would spoil the vacuum superposition. Practical limits
+--- the finite number of beams a chamber can accept, diffraction, optical
+damage, and the alignment tolerance quantified below --- bound the attainable
+$N$ and are the subject of Sec.~\ref{sec:discussion}.
+
+\begin{figure}[t]
+\includegraphics[width=\columnwidth]{figures/fig_invariants.pdf}
+\caption{(a)~The invariant $\mathcal{F}$ at the strong-field plane
+$kz=0$ as a function of time, for the two polarisation geometries. The
+counter-propagating linear standing wave, Eq.~\eqref{eq:lin_inv}, oscillates
+through zero twice per period, so the tunnelling rate is switched off for
+half of the cycle; the co-rotating circular collision,
+Eq.~\eqref{eq:cp_inv}, is stationary at $\mathcal{F}=2E_0^2$. (b)~Energy
+scaling of $N$ coherently combined beams at the common focus: the input
+energy required to reach a prescribed invariant falls as $1/N$
+(Eq.~\eqref{eq:oneoverN}), while at fixed total energy the peak field grows
+as $\sqrt{N}$. The dashed line marks the single-beam reference. Both panels
+are analytic; no simulation input enters.}
+\label{fig:invariants}
+\end{figure}
+
+\subsection{Phase-matching boundary conditions}
+\label{sec:bc}
+
+Equation~\eqref{eq:variational} is an optimisation over fields, but the fields
+are not free: they must satisfy $\partial_\mu F^{\mu\nu}=0$ and, to add
+coherently, must arrive at the focus with a common phase. This translates into
+geometric boundary conditions on the beam arrangement:
+\begin{enumerate}
+\item \emph{Phase alignment.} The optical path from each source to the common
+focus must be equal to better than a fraction of a wavelength,
+$\Delta L\ll\lambda$; otherwise the relative phases drift and
+$E_{\mathrm{peak}}$ falls below $N E_b$. The tolerance on the crossing angle
+follows from $\Delta L\simeq d\,\delta\theta$ for beams of transverse extent
+$d$.
+\item \emph{Polarisation alignment.} For the quiescent (circular) optimum of
+Eq.~\eqref{eq:cp_inv}, all beams must share the \emph{same} helicity; a
+helicity flip converts the configuration towards the oscillatory linear case
+of Eq.~\eqref{eq:lin_inv} and destroys the time-independence of $\mathcal{F}$.
+\item \emph{Symmetry.} A symmetric arrangement about the focus equalises the
+$\Delta L$ of all beams simultaneously and is the configuration that maximises
+$N$ for a given alignment tolerance.
+\end{enumerate}
+These conditions are the concrete content of ``boundary-condition geometry'':
+they select, among all superpositions satisfying Maxwell's equations, the
+subclass that is (a) coherent and (b) quiescent.
+
+% ==================================================================
+\section{Discussion, falsifiability and outlook}
+\label{sec:discussion}
+% ==================================================================
+
+The program sketched above makes a sharp, falsifiable prediction and leaves a
+well-defined residual problem.
+
+\paragraph{What would falsify the $1/N$ scaling.} Equation~\eqref{eq:oneoverN}
+assumes vacuum superposition and perfect coherence. It is refuted if, in a
+controlled calculation in which $N$ is increased at fixed total energy and
+fixed $\Sigma,\tau$, the peak rest-frame field $a$ fails to scale as
+$\sqrt{N}$ --- for instance because the crossing region is driven into plasma,
+because phase-matching errors grow with $N$, or because back-reaction from the
+created pairs screens the field. Each of these is a calculable departure, and
+each has a distinct signature in the emerging pair spectrum.
+
+\paragraph{The residual problem.} Once $N$ and the polarisation are fixed, the
+open question is the optimal \emph{temporal} profile: how the field must be
+shaped in time so that $a$ is held above the threshold long enough for the
+rate \eqref{eq:schwinger_rate} to accumulate, without the oscillating
+zero-crossings that suppress the yield. This couples the geometry to the
+adiabaticity of the process and is where a purely analytic treatment gives way
+to computation.
+
+\paragraph{Numerical test.} The analytic statements above are testable at low
+cost in one and two dimensions with open particle-in-cell codes that implement
+the quantum processes: SMILEI~\cite{Smilei2018}, EPOCH~\cite{EPOCH2015},
+OSIRIS, and WarpX~\cite{WarpX2022}. The measurement to perform is the
+\emph{rest-frame field} $a(\mathbf{x},t)$ reconstructed from the simulated
+$\mathbf{E},\mathbf{B}$ and the yield obtained by integrating
+Eq.~\eqref{eq:yield}, compared against the analytic predictions
+\eqref{eq:lin_inv}--\eqref{eq:cp_inv} for two beams and the scaling
+\eqref{eq:oneoverN} for $N$ beams. The experiment to which these predictions
+speak is LUXE at DESY~\cite{LUXE2021}, whose
+beam--laser and photon--laser configurations are precisely coherent
+superpositions of the kind analysed here.
+
+\paragraph{Scope.} This draft deliberately restricts itself to the pure-field
+problem. It does not treat dynamically assisted production, and it makes no
+claim beyond the assumptions stated at Eq.~\eqref{eq:oneoverN}. A claim that
+survives those assumptions is a result; a claim that needs them dropped is a
+computation.
+
+% ==================================================================
+\appendix
+\section{Eigenvalues of the field tensor and the rest-frame fields}
+\label{app:eigen}
+% ==================================================================
+
+The invariants \eqref{eq:invariants2} are the coefficients of the
+characteristic polynomial of $F^{\mu\nu}$. Contracting
+$F^\mu{}_\nu F^\nu{}_\lambda$ and using the two invariants one finds that the
+non-zero eigenvalues come in a pair $\pm a$ and a pair $\pm i b$ with
+\begin{equation}
+a^2=\sqrt{\mathcal{F}^2+\mathcal{G}^2}+\mathcal{F},\qquad
+b^2=\sqrt{\mathcal{F}^2+\mathcal{G}^2}-\mathcal{F},
+\end{equation}
+which is Eq.~\eqref{eq:ab}; the relations \eqref{eq:abrel} follow immediately.
+Because $\mathcal{F}$ and $\mathcal{G}$ are invariant, so are $a$ and $b$: they
+are the field magnitudes in the frame where $\mathbf{E}\parallel\mathbf{B}$
+(if $\mathcal{G}\neq0$) or where one of the two vanishes. For a null field
+($\mathcal{F}=\mathcal{G}=0$) both eigenvalues vanish, recovering Lemma~1.
+For a purely electric configuration ($\mathcal{G}=0$, $\mathcal{F}>0$) one has
+$b=0$ and $a=\sqrt{2\mathcal{F}}=|\mathbf{E}|$ in the rest frame, which is why
+$\mathcal{F}$ alone measures how close a configuration is to the Schwinger
+threshold.
+
+\bibliography{refs}
+
+\end{document}

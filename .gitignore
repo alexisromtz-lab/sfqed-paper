@@ -1,0 +1,16 @@
+# byproducts de compilacion (no son fuente; se regeneran)
+*.aux
+*.log
+*.blg
+*.bbl
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+# paquete de release (se regenera con git archive)
+*.tar.gz
+# basura de sistema y de python
+.DS_Store
+__pycache__/
+*.pyc
