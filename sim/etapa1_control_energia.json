@@ -1,0 +1,45 @@
+{
+  "T_UTC": "2026-10-11T01:14:58Z",
+  "UNIVERSO DECLARADO": "malla xy 480x480 = 12 lambda_L por lado, dx = lambda_L/40; transito fisico = 19.485 lambda_L (los 866 pasos pre-registrados a CFL 0.9) = 1113 pasos a CFL 0.7; diagnostico cada 20 pasos (PROTOCOLO_1overN.md \u00a74); CFL de 2D = 0.7 [CORREGIDO del 0.9 pre-registrado: limite de von Neumann en 2D = 1/sqrt(2) = 0.7071]; vacio clasico, SI 2019 (CODATA 2018) via sim/params.py; motor numpy; unidad de conteo = celda; VENTANA DE MEDIDA = celdas [100,380] (excluye la linea de inyeccion, que no es objeto de Maxwell: ahi cB/|E| = 0.514 y |E| = 6.9x lo prescrito, medido)",
+  "ancla_paso": 429,
+  "candidato_exacto": 2,
+  "cfl": 0.7,
+  "deriva": {
+    "1": 0.001090349570078919,
+    "2": 7.943719453207265e-05,
+    "3": 0.0005888618137943613,
+    "4": 0.0005947071063436837,
+    "5": 0.0005798007559456586
+  },
+  "deriva_mitades": {
+    "1": [
+      0.00038580477369998256,
+      0.001090349570078919
+    ],
+    "2": [
+      8.830967661133116e-06,
+      7.943719453207265e-05
+    ],
+    "3": [
+      0.00020102543156630404,
+      0.0005888618137943613
+    ],
+    "4": [
+      0.0002065553112773344,
+      0.0005947071063436837
+    ],
+    "5": [
+      0.00019165474336713118,
+      0.0005798007559456586
+    ]
+  },
+  "dt_s": 4.669897332774128e-17,
+  "paso_muro": 114,
+  "pasos": 1800,
+  "pasos_libres": 1371,
+  "pasos_pulso": 429,
+  "pec": false,
+  "ripple_previsto": 0.003022566347833615,
+  "umbral": 1e-09,
+  "veredicto": "ROJO"
+}

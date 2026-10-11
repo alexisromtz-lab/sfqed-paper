@@ -58,6 +58,15 @@ def intensidad_de_a0(a0: float) -> float:
     return EPS0 * C * campo_de_a0(a0) ** 2
 
 
+def a0_de_campo(e_v_m: float) -> float:
+    """INVERSA de campo_de_a0: a0 adimensional de un campo E (V/m).
+
+    Es la conversion que necesita la Etapa 1: la malla entrega E en V/m y el
+    falsador juzga el a0 adimensional de la misma serie que a_ref_N_1.
+    """
+    return Q_E * e_v_m / (M_E * OMEGA * C)
+
+
 def a0_de_intensidad(i_si: float) -> float:
     """a0 a partir de una intensidad en W/m2, misma convencion R2."""
     return math.sqrt(i_si / (EPS0 * C)) * Q_E / (M_E * OMEGA * C)
@@ -78,6 +87,7 @@ def bloque() -> dict:
         "I_CR_W_m2": I_CR, "I_CR_W_cm2": I_CR * 1e-4,
         "E0_de_a0_1_V_m": campo_de_a0(1.0),
         "I_de_a0_1_W_cm2": intensidad_de_a0(1.0) * 1e-4,
+        "control_ida_vuelta_a0_1": a0_de_campo(campo_de_a0(1.0)),
         "ORDENES_hasta_I_TECHNO": math.log10((I_CR * 1e-4) / I_TECHNO),
     }
 
@@ -102,6 +112,8 @@ def imprimir(b: dict) -> None:
     print(f"  I_cr      = {b['I_CR_W_cm2']:.6g} W/cm2  (convencion R2: circular)")
     print(f"  a0 = 1  ->  E0 = {b['E0_de_a0_1_V_m']:.6g} V/m ; "
           f"I = {b['I_de_a0_1_W_cm2']:.6g} W/cm2")
+    print(f"  ida y vuelta a0 = 1 -> {b['control_ida_vuelta_a0_1']!r} "
+          "(control de a0_de_campo)")
     print(f"  ordenes de I_cr sobre I_techo = {b['ORDENES_hasta_I_TECHNO']:.3f}")
     print("--- nota de honestidad ---")
     print("  Schwinger (a0 ~ a0_cr) NO es alcanzable: el escalado 1/N se prueba")

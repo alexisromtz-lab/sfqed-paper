@@ -1,0 +1,14 @@
+{
+  "T_UTC": "2026-10-11T00:49:07Z",
+  "UNIVERSO DECLARADO": "malla xy 480x480 = 12 lambda_L por lado, dx = lambda_L/40; transito fisico = 19.485 lambda_L (los 866 pasos pre-registrados a CFL 0.9) = 1113 pasos a CFL 0.7; diagnostico cada 20 pasos (PROTOCOLO_1overN.md \u00a74); CFL de 2D = 0.7 [CORREGIDO del 0.9 pre-registrado: limite de von Neumann en 2D = 1/sqrt(2) = 0.7071]; vacio clasico, SI 2019 (CODATA 2018) via sim/params.py; motor numpy; unidad de conteo = celda; VENTANA DE MEDIDA = celdas [100,380] (excluye la linea de inyeccion, que no es objeto de Maxwell: ahi cB/|E| = 0.514 y |E| = 6.9x lo prescrito, medido)",
+  "medido": {
+    "0.7": {
+      "E_pico_final_V_m": 317241214837887.44,
+      "crecimiento": 31709.79378362299
+    },
+    "0.9": {
+      "E_pico_final_V_m": Infinity,
+      "crecimiento": Infinity
+    }
+  }
+}

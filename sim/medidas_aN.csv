@@ -1,0 +1,18 @@
+# sim/medidas_aN.csv -- MEDICION de la Etapa 1 (propagador clasico de
+# Maxwell 2D, sim/maxwell2d.py). Columna 1 = N ; columna 2 = a_medido
+# (adimensional, e max|E| / (m_e omega c)).
+# generado: 2026-10-11T01:15:44Z
+# UNIVERSO DECLARADO: malla xy 480x480 = 12 lambda_L por lado, dx = lambda_L/40; transito fisico = 19.485 lambda_L (los 866 pasos pre-registrados a CFL 0.9) = 1113 pasos a CFL 0.7; diagnostico cada 20 pasos (PROTOCOLO_1overN.md §4); CFL de 2D = 0.7 [CORREGIDO del 0.9 pre-registrado: limite de von Neumann en 2D = 1/sqrt(2) = 0.7071]; vacio clasico, SI 2019 (CODATA 2018) via sim/params.py; motor numpy; unidad de conteo = celda; VENTANA DE MEDIDA = celdas [100,380] (excluye la linea de inyeccion, que no es objeto de Maxwell: ahi cB/|E| = 0.514 y |E| = 6.9x lo prescrito, medido)
+# geometria: haces co-propagantes desde el plano fuente x = 80 celdas,
+#   frente convergente al foco (240,240), brazo 4 lambda,
+#   energia total fija repartida en N (a_beam = a_ref/sqrt(N), modelo).
+# eta = a_medido(1)/a_tot_pred(1) = 0.469008: el acoplamiento del
+#   instrumento. El falsador ancla en a(1) MEDIDO, asi que eta se cancela
+#   en beta y en el cociente; se declara para que la escala absoluta no
+#   se lea como parte del veredicto.
+# modo colineal (PRE-REGISTRADO, §1).
+1,79.98173362
+2,113.1112524
+4,159.9634672
+8,226.2225049
+16,319.9269345
