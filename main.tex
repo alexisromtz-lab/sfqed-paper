@@ -436,6 +436,123 @@ claim beyond the assumptions stated at Eq.~\eqref{eq:oneoverN}. A claim that
 survives those assumptions is a result; a claim that needs them dropped is a
 computation.
 
+\subsection{Numerical benchmark of the solver}
+
+The measurement described above requires a numerical platform whose
+reconstruction of the rest-frame field $a$ is itself under control. This
+subsection reports the calibration of such a platform against a configuration
+whose answer is known in closed form, and it fixes the error floor against
+which any production run is to be read.
+
+\paragraph{The measured quantity.} Define
+\begin{equation}
+R=\frac{\max_{\mathbf{x},t}a(\mathcal{F}(\mathbf{x},t),\mathcal{G}(\mathbf{x},t))}
+{\max_{\mathbf{x},t}\left|\mathbf{E}(\mathbf{x},t)\right|},
+\label{eq:ratio}
+\end{equation}
+with both maxima taken over the same spacetime region and with $a$ built from
+the full superposition $F=\sum_iF_i$. The ratio is dimensionless and is
+invariant under a global rescaling of the amplitudes. It obeys $0\le R\le1$:
+applying Cauchy--Schwarz to Eq.~\eqref{eq:invariants2} gives
+$a^2\le|\mathbf{E}|^2$ pointwise, with equality if and only if
+$\mathbf{E}\parallel\mathbf{B}$, or one of the two vanishes. It also vanishes
+identically for a single plane wave of any intensity, since then
+$\mathcal{F}=\mathcal{G}=0$ everywhere by Lemma~1. The quantity $R$ is
+therefore a purely classical property of the superposition, involving neither
+$\alpha$ nor $m_e$ nor the critical field, and it is nonzero as soon as two
+wavevectors are not parallel.
+
+\paragraph{Closed-form reference.} Let $N$ circularly polarised beams of equal
+amplitude $E_0$ share a common focus, with co-rotating polarisation, with
+wavevectors on a cone of half-angle $\alpha$,
+$\hat{\mathbf{k}}_j=(\sin\alpha\cos\varphi_j,\sin\alpha\sin\varphi_j,\cos\alpha)$
+and $\varphi_j=2\pi j/N$, and with all phases matched at the focus. Summing
+the fields there, the transverse components cancel in pairs and the
+longitudinal ones add:
+\begin{equation}
+\begin{split}
+\mathbf{E}&=E_{\mathrm{f}}\cos\omega t\;\hat{\mathbf{z}},\qquad
+\mathbf{B}=-E_{\mathrm{f}}\sin\omega t\;\hat{\mathbf{z}},\\
+E_{\mathrm{f}}&\equiv N\sin\alpha\,E_0\qquad(\hbar=c=1),
+\end{split}
+\label{eq:focus_cone}
+\end{equation}
+so that $\mathcal{F}=\tfrac12E_{\mathrm{f}}^2\cos2\omega t$,
+$\mathcal{G}=-\tfrac12E_{\mathrm{f}}^2\sin2\omega t$ and
+$\sqrt{\mathcal{F}^2+\mathcal{G}^2}=\tfrac12E_{\mathrm{f}}^2$ at every
+instant. By Eq.~\eqref{eq:ab} the rest-frame field at the focus is then
+\begin{equation}
+a(\mathbf{0},t)=E_{\mathrm{f}}\left|\cos\omega t\right|
+=\left|\mathbf{E}(\mathbf{0},t)\right|,
+\label{eq:focus_a}
+\end{equation}
+the equality case of the bound above: at the focus the electric and magnetic
+fields are parallel at all times, and the pointwise ratio $a/|\mathbf{E}|$
+reaches its ceiling of unity at the instants of maximal electric field. The
+two global maxima of Eq.~\eqref{eq:ratio} are nevertheless attained at
+different points. Away from the focus the longitudinal components dephase
+while the transverse ones survive, so $\max|\mathbf{E}|$ grows faster than
+$\max a$ and $R$ remains below unity.
+
+\paragraph{Numerical value.} Evaluating Eq.~\eqref{eq:ratio} on the closed
+form of Eq.~\eqref{eq:focus_cone} for $N=4$, by scanning a cubic region of
+side $6\lambda$ centred on the focus with a beam waist $w_0=2\lambda$, gives
+\begin{equation}
+\begin{split}
+R(\alpha=\arctan\tfrac12=26.5651^\circ)&=0.7125,\\
+R(\alpha=30^\circ)&=0.7772,
+\end{split}
+\label{eq:Rcone}
+\end{equation}
+both values stable under a refinement of the sampling grid, the first by less
+than $0.2\%$ and the second exactly. The deficit from unity is a defocusing
+cost and not a numerical artefact: at $\alpha=30^\circ$ some $22\%$ of the
+peak laboratory field is not rest-frame field, and the deficit falls slowly as
+the wavevectors spread apart, from $29\%$ at $26.5651^\circ$.
+
+\paragraph{Grid error and field reconstruction.} Two effects of the
+discretisation were separated from this geometry by solving converging
+two-dimensional configurations at $10$, $20$ and $40$ points per wavelength,
+and comparing the grid-sampled ratio with the continuous value of the same
+configuration. The deviation falls from $10$--$14\%$ at $\lambda/10$ to
+$3$--$4\%$ at $\lambda/20$ and to $2.5\%$ or less at $\lambda/40$, which is
+the resolution floor quoted below. Independently, the six field components are
+stored at different positions on a staggered grid, so the invariants must be
+built after interpolating both fields to a common point. Interpolating only
+$\mathbf{B}$ to the positions of $\mathbf{E}$, the cheapest reconstruction,
+shifts the result from $0.7442$ to $0.7740$, a difference of $0.0297$ or
+$3.8\%$, and it does so by displacing the position of the maximum rather than
+by rescaling it, so the two reconstructions are not interchangeable.
+
+\paragraph{Agreement with the three-dimensional reference.} With the fully
+de-staggered reconstruction, a two-dimensional full-wave solution of the same
+class of problem --- a converging wave of the same circular polarisation,
+injected through a parabolic front of half-aperture $2\lambda$ and focal
+length $4\lambda$, on a grid of $\lambda/40$ --- gives $R=0.7740$, against
+$R=0.7772$ for the closed-form cone of Eq.~\eqref{eq:Rcone}; the difference is
+$0.41\%$, inside the $2.5\%$ floor of the previous paragraph. Interpolating
+the cone family linearly in $\alpha$ between $26.5651^\circ$ and
+$30^\circ$, that value corresponds to an effective half-angle
+$\alpha_{\mathrm{eff}}=29.83^\circ$, or to $28.25^\circ$ with the cheaper
+reconstruction, to be compared with the geometric tilt of the injected front,
+$\arctan(2\lambda/4\lambda)=26.57^\circ$. The correspondence is established
+for the aggregate quantity $R$, and it is not a statement of geometric
+equivalence: a uniform fan of plane waves of the same polarisation and the
+same half-angle saturates at $R=0.314$. What the platform reproduces is the
+response of the focusing front, not that of the aperture alone.
+
+\paragraph{What the benchmark does and does not establish.} It calibrates a
+two-dimensional platform on the quantity defined by Eq.~\eqref{eq:ratio} to
+better than $0.5\%$ at $\lambda/40$, and it fixes the floor, $2.5\%$, below
+which a difference between the platform and the closed form cannot be
+resolved. It detects no vacuum polarisation, and it contains none: $R$ is a
+property of the classical superposition, would take the same values in a
+theory with no critical field, and its deficit from unity measures defocusing
+rather than pair creation. Pair creation enters only through the yield
+functional $\mathcal{N}$ of Eq.~\eqref{eq:yield}, which the benchmark does not
+evaluate; what the benchmark tests is that the platform integrates the same
+field that the paper optimises.
+
 \subsection{Domain of validity and practical constraints}
 
 The bounds collected here are part of the result rather than qualifications
