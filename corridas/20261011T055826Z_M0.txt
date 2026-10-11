@@ -1,0 +1,70 @@
+==============================================================
+SFQED · bundle · verificacion en un comando
+T_UTC = 2026-10-11T05:58:26Z
+UNIVERSO DECLARADO: bundle/ = 26 archivos = 25 declarados en HASHES.sha256 + el propio manifiesto
+BANCO MUST-FAIL: tests/bench_must_fail.sh (7 casos). NO se invoca desde aqui:
+  un verificador no se valida a si mismo; el banco lo mide desde afuera.
+MOTOR: shasum -a 256 | cmp | grep -F | python3 -B | git -C
+UNIDAD: archivo (inventario) | linea (anclas) | byte (custodia)
+VENTANA: el T_UTC de este encabezado. Toda cifra de conteo caduca al escribirse.
+sha16(HASHES.sha256) = bb1b7947bbbffa8f   <- no circular: lo imprime el verificador
+sha16(verificar.sh)  = b51b2b93baa630a7
+sha16(00_INDICE.md)  = 1c0604d935152274
+==============================================================
+[1] selftest del instrumento de telemetria (must-fail controls incluidos)
+    instrumento: instrumentos/telemetria_minima.py  sha16=8ed0d71af359ce63
+    UNIVERSO DECLARADO: 13 lineas de prueba (3 validas + 10 malformadas) + 1 archivo vacio, motor = valida() sobre casos literales y cmd_check() sobre archivo de 0 bytes, unidad = caso, ventana = reloj local.
+      validos aceptados = 3/3 · malformados rechazados = 10/10
+      control de archivo vacio: rc = 2 (esperado 2) -> OK
+      veredicto = VERDE
+[2] integridad de HASHES.sha256 (byte a byte)
+    entradas en el manifiesto = 25 · OK = 25 · FAILED = 0
+    OK: los 25 archivos declarados coinciden con su hash
+[3] custodia: piezas, identidad con el anfitrion, enganche y binario
+    instrumentos/custodia/gitleaks_casa.toml  sha16=2e03d8999823ab6e OK
+    instrumentos/custodia/pre-commit  sha16=b596865080c6415f OK
+    instrumentos/custodia/pre-push  sha16=024903581d44d706 OK
+    instrumentos/custodia/install.sh  sha16=40515cea38f9808c OK
+    instrumentos/custodia/instalar_en_repos.sh  sha16=edb1bd60fe3b5751 OK
+    repo anfitrion: /Users/marlene/sfqed-paper
+    identico: .gitleaks.toml == instrumentos/custodia/gitleaks_casa.toml
+    identico: scripts/util/git-hooks/pre-commit == instrumentos/custodia/pre-commit
+    identico: scripts/util/git-hooks/pre-push == instrumentos/custodia/pre-push
+    hook pre-commit = enlace relativo -> ../../scripts/util/git-hooks/pre-commit
+      el contenido del enlace es la pieza del bundle -> OK
+    hook pre-push = enlace relativo -> ../../scripts/util/git-hooks/pre-push
+      el contenido del enlace es la pieza del bundle -> OK
+    core.hooksPath: SIN DECLARAR (aplican los hooks de .git/hooks) OK
+    gitleaks: /opt/homebrew/bin/gitleaks sha16=f414bc2fb952be6c version=8.30.1
+      mismo binario que el declarado (8.30.1) OK
+[4] anclas de 00_INDICE.md: cada afirmacion apunta a una linea viva y a un archivo con hash
+    OK actas/AUDITORIA_DE_LA_ORDEN_FDTD_Y_ORDEN_CORREGIDA_20261011.md:69  [0.500000]
+    OK actas/AUDITORIA_DE_LA_ORDEN_FDTD_Y_ORDEN_CORREGIDA_20261011.md:70  [0.486414]
+    OK actas/AUDITORIA_DE_LA_ORDEN_FDTD_Y_ORDEN_CORREGIDA_20261011.md:71  [0.499999]
+    OK actas/AUDITORIA_DE_LA_ORDEN_FDTD_Y_ORDEN_CORREGIDA_20261011.md:131  [Cierre con conteo, no con lectura]
+    OK actas/AUDITORIA_DE_LA_ORDEN_FDTD_Y_ORDEN_CORREGIDA_20261011.md:176  [No lo es]
+    OK actas/AUDITORIA_DE_LA_ORDEN_FDTD_Y_ORDEN_CORREGIDA_20261011.md:182  [178.7553300762]
+    OK actas/AUDITORIA_DE_LA_ORDEN_FDTD_Y_ORDEN_CORREGIDA_20261011.md:333  [miente en silencio]
+    OK actas/ADENDA_2_LECTURA_CONTRA_20261011.md:90  [no una envolvente]
+    OK actas/ADENDA_LECTURA_CONTRA_20261011.md:31  [El RC = 1 es del ancla, no del objeto]
+    OK actas/ETAPA1_CONTRA_REPORTE_20261011.md:114  [control del sandbox]
+    OK actas/ETAPA1_CONTRA_REPORTE_20261011.md:117  [no es reutilizable entre]
+    OK actas/ETAPA1_REPORTE_20261011.md:31  [0.45]
+    OK preregistros/PROTOCOLO_1overN.md:45  [0.45]
+    OK preregistros/PROTOCOLO_1overN.md:47  [zona de muerte]
+    OK preregistros/PROTOCOLO_1overN.md:50  [antes]
+    OK preregistros/PREREGISTRO_SIGMA_PHI_20261011.md:55  [Este nulo SI puede enrojecer]
+    OK preregistros/PREREGISTRO_KERR_20261011.md:12  [no es un nulo: es un candado]
+    OK preregistros/PREREGISTRO_KERR_20261011.md:21  [piso de maquina]
+    OK instrumentos/medidores/falsador.py:125  [sin N=1 no se puede medir el cociente]
+    OK instrumentos/medidores/maxwell2d.py:352  [I_SL + 40]
+    OK instrumentos/telemetria_minima.py:341  [archivo vacio NO es verde]
+    OK verificar.sh:103  [MANIFIESTO declara 0 objetos]
+    OK tests/bench_must_fail.sh:112  [B - 2 "MANIFIESTO"]
+    OK tests/bench_must_fail.sh:118  [shasum ausente]
+    OK tests/bench_must_fail.sh:148  [F - 0 "PARCIAL"]
+    OK tests/bench_must_fail.sh:155  [gitleaks ausente]
+==============================================================
+RESUMEN  verde=40 · rojo=0 · no_medido=0 · anclas=26 ok=26 rojo=0
+T_UTC inicio=2026-10-11T05:58:26Z fin=2026-10-11T05:58:27Z
+VEREDICTO: VERDE · RC=0

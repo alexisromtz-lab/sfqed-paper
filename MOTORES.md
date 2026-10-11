@@ -209,3 +209,20 @@ discriminador se **recose desde el `RESUMEN`** (`no_medido=N`, medido, no invent
 `corridas/20261011T060043Z_M0.txt`. La custodia quedó **medida** (git y `gitleaks` presentes ⇒
 sin `no_medido`). **Los dos crudos se conservan** — el defectuoso y el reparado: junto a la foto
 previa del objeto se guarda la del instrumento.
+
+**Custodia de los crudos — cerrada (orden del dueño, `T_UTC 2026-10-11T06:18:14Z`).** El commit
+`6b329189deaf09d4` citaba `8a63de561cbe62af` y el directorio `corridas/` no estaba ni versionado
+ni ignorado: en un clon la cita **no resolvía**. Es deuda de la **letra ya publicada**, no de un
+objeto en vuelo, y se cierra **versionando el par completo**: `corridas/20261011T055826Z_M0.txt`
+(sha16 `797e9b08ff0a2070`) y `corridas/20261011T060043Z_M0.txt` (sha16 `8a63de561cbe62af`),
+**70 l · 4 872 B cada uno**, medidos a `06:18:14Z` — no citados. Conservar sólo el reparado
+habría borrado del registro la única foto del **defecto del instrumento**. `.gitignore` **no**
+gana una línea para `corridas/`: la opción «subproducto efímero» se **declina**, y se declara
+declinada: los crudos no son reproducibles **como par** — el pre-fix no se re-corre.
+
+**Lo que esto NO cierra (declarado, no adjudicado).** La reconciliación del manifiesto de
+`bundle/` queda **postergada a propósito**: `verificar.sh` es el **instrumento que produjo los
+dos crudos**; cambiarlo antes de fijar los crudos habría dejado al par defecto/reparación **sin
+referente**. Y `bundle/` sigue vivo en el árbol de trabajo (` M` ×3 más huérfanos sin custodiar):
+su conteo de archivos, el número de entradas del manifiesto y la cláusula de cardinalidad del
+verificador **se miden en el acto de escribir** — nunca se heredan de este párrafo.
