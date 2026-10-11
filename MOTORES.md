@@ -226,3 +226,56 @@ dos crudos**; cambiarlo antes de fijar los crudos habría dejado al par defecto/
 referente**. Y `bundle/` sigue vivo en el árbol de trabajo (` M` ×3 más huérfanos sin custodiar):
 su conteo de archivos, el número de entradas del manifiesto y la cláusula de cardinalidad del
 verificador **se miden en el acto de escribir** — nunca se heredan de este párrafo.
+
+---
+
+## 6.B · Fe de erratas aditiva (T_UTC 2026-10-11T06:28:32Z–06:28:49Z, `HEAD` `85754379d6e4714d`) — el estado de la máquina manda sobre la narrativa previa
+
+**Procedimiento (ratificado por el dueño, `T_UTC 2026-10-11T06:24Z`).** Cuando un **artefacto
+commiteado** y un texto normativo anterior se contradicen, **el artefacto se queda** y el texto
+recibe **fe de erratas aditiva**; **nunca un revert**. `§6.A` **no se edita**: su letra queda
+como estaba y esta sección la **supersede por declaración**. Un revert habría borrado del
+registro la decisión que sí se tomó.
+
+**1 · La frase superada.** `§6.A` cierra su párrafo de custodia así: «`.gitignore` **no** gana una
+línea para `corridas/`: la opción «subproducto efímero» se **declina**, y se declara declinada».
+Era **verdadera** en su ventana (`T_UTC 2026-10-11T06:00:43Z`) y dejó de serlo **~22 min
+después**, por otra mano, en el commit `872cd6461f3847fb` (`2026-10-11T06:22:33Z`, «`corridas/`
+fuera del universo del bundle: regla selectiva en `.gitignore` del raiz»).
+
+**2 · Lo que la máquina dice (medido, no citado; motor `git`/`wc`/`shasum`/`grep -n`, ventana de
+esta sección).**
+
+| objeto | `§6.A` (06:00:43Z) | `HEAD` (medido) |
+|---|---|---|
+| `.gitignore` | 16 l · 248 B · `d59fda8121906275` | **27 l · 924 B · `71b469307c641708`** |
+| líneas con `corridas` | 0 | **4** — l.17 comentario («efímeras por diseño») · l.21 `corridas/*` · l.26 y l.27 las dos excepciones M0 |
+
+**3 · Por qué no es una contradicción de fondo.** `§6.A` **declinó la regla** por una razón de
+**reproducibilidad**, y esa razón **sigue en pie**: la regla que entró no la toca. Lo que entró no
+afirma reproducibilidad — declara `corridas/` como **salida local de `tools/sello.sh`, efímera por
+diseño**, y **conserva versionados los dos crudos M0**. La regla declinada y la vigente **no son
+la misma regla**: la declinada era «una regla en lugar de la reproducibilidad»; la vigente es una
+**frontera de árbol de trabajo**. Se declara el **cambio de suelo**; no se adjudica el motivo de
+la otra mano.
+
+**4 · Lo que la frontera NO toca (medido en el acto, mismos motores).** `bundle/` **35 piezas**
+por `os.walk` = **35** por `git ls-tree -r HEAD bundle`; `HASHES.sha256` **34** entradas ⇒
+`34 + 1 = 35`, el manifiesto sin entrada propia. `corridas/` **2** archivos en `HEAD`.
+`git status --porcelain -uall` filtrado: **cero** entradas para `bundle/`, `corridas/` y
+`MOTORES.md`; sólo ` M main.pdf` y ` M main.tex` (de otra mano, declarados). El universo del
+bundle sigue siendo el suyo y **no contiene** `corridas/`.
+
+**5 · Segunda afirmación de `§6.A` superada por el mismo hecho (declarada, no editada).** `§6.A`
+cierra diciendo que `bundle/` «sigue vivo en el árbol de trabajo (` M` ×3 más huérfanos sin
+custodiar)». Medido en la ventana de esta sección: **`bundle/` sin entradas en el porcelain**. La
+reconciliación que `§6.A` **postergó a propósito** la ejecutó otra mano en `10db313` (`06:19:05Z`)
++ `872cd64` (`06:22:33Z`); esta ventana la **verifica corriendo el instrumento**, no la re-ejecuta.
+La regla que `§6.A` dejó escrita sigue mandando: esas cifras **se miden en el acto de escribir y
+no se heredan** — esta tabla incluida, que caduca con el próximo `git add`.
+
+**6 · Frontera de esta sección.** No edita `§6.A`. No revierte `.gitignore`. No escribe en
+`bundle/`. No toca `main.tex` ni `main.pdf`. `MOTORES.md` estaba limpio al escribir:
+`7233902d98e5b541` en `HEAD` = `7233902d98e5b541` en disco. Y `HEAD` **se movió otra vez** entre
+la medición previa (`872cd6461f3847fb`, `06:25:58Z`) y ésta (`85754379d6e4714d`): la ventana
+previa queda declarada como **caducada a los ~2 min**, no adjudicada.
