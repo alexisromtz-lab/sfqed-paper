@@ -26,15 +26,45 @@ Arrastrar **en este orden** a «Drag and drop files here»:
 
 | # | archivo | bytes | sha256 (16) | papel |
 |---|---------|-------|-------------|-------|
-| 1 | `main.pdf` | 146 779 | `753e25234203a649` | **documento principal / vista previa** |
-| 2 | `sfqed-paper-zenodo-20261010.tar.gz` | 189 022 | `c567b5f9a7712357` | fuentes + figuras (6 miembros, sin `._` ni `.DS_Store`) |
+| 1 | `main.pdf` | 146 772 | `b8209e911e8d8b20` | **documento principal / vista previa** |
+| 2 | `sfqed-paper-zenodo-20261010.tar.gz` | 188 970 | `51cb2cb40190b567` | fuentes + figuras (5 archivos; sin `._` ni `.DS_Store`) |
 
 - **El orden importa:** en Zenodo la vista previa es **el primer archivo** cuyo tipo se puede previsualizar
   ⇒ `main.pdf` va **primero**.
-- Alternativa (equivalente al tar.gz, si prefieres archivos sueltos): `main.tex` (22 358 B · `5fa1315b33ff0769`),
+- Alternativa (equivalente al tar.gz, si prefieres archivos sueltos): `main.tex` (22 367 B · `4299786a34bdb313`),
   `refs.bib` (3 694 B · `940e3cf07ce24a1b`), `figures/fig_invariants.py` (5 894 B · `d1626c36036e62b8`),
   `figures/fig_invariants.pdf` (46 576 B · `a97886dd5135371d`).
 - Si al terminar la subida la vista previa no es el PDF, arrastra `main.pdf` al primer puesto de la lista.
+
+### 1.b RE-MEDICIÓN TRAS EL CICLO DE CONGELADO (divergencia declarada)
+
+`T_UTC_REMEDICION = 2026-10-11T00:02Z`
+
+Los valores de la tabla de arriba ya son los **re-medidos**. Los que esta hoja traía escritos se midieron
+a `23:12:55Z` contra un `.tex` que todavía decía `\date{\today}`. El ciclo de congelado de hoy
+**sustituyó esa orden por `\date{10 October 2026}`** (línea 32) y **recompiló** con
+`SOURCE_DATE_EPOCH=1791590400` (2026-10-10T00:00:00Z) y `tectonic 0.17.0`.
+
+| archivo | antes (23:12:55Z) | ahora (congelado) |
+|---|---|---|
+| `main.tex` | 22 358 B · `5fa1315b33ff0769` | **22 367 B · `4299786a34bdb313`** |
+| `main.pdf` | 146 779 B · `753e25234203a649` | **146 772 B · `b8209e911e8d8b20`** |
+
+- El `+9 B` del `.tex` es exactamente `\today` (6 caracteres) -> `10 October 2026` (15). Nada más cambió.
+- `RC_TECTONIC = 0` · `overfull \hbox = 0` · `underfull \hbox = 6` (cosmético: `main.tex:189`, `main.tex:401`).
+- La fecha **impresa dentro del PDF**, leída con extractor de texto (no con la vista) es
+  `(Dated: 10 October 2026)`; la palabra `today` aparece **0** veces y el metadato es
+  `CreationDate = D:20261010000000`. Con `SOURCE_DATE_EPOCH` la compilación es **byte-reproducible**
+  (dos corridas seguidas dan `b8209e911e8d8b20`; sin la variable da otro hash, `ac1855ce871cce2c`).
+- El paquete `.tar.gz` (**188 970 B · `51cb2cb40190b567`**, 5 miembros) se armó con estos mismos bytes
+  de disco y se contrastó **miembro por miembro**: los cinco sha coinciden con el árbol. Se anota aquí
+  **antes** del commit y del tag, no después: el paquete **no contiene** a esta hoja ⇒ no hay circularidad.
+  Dos corridas seguidas dan el mismo sha.
+- El gate `figures/check_invariants.py` se reparó hoy (lee las fórmulas de `main.tex`, `TOL=1e-12`,
+  `assert` explícito de la física correcta y `sys.exit(1)` en rojo) y corre **VERDE** con `RC=0`;
+  con `--control` enrojece **a propósito** (`RC=0`, `CONTROL POSITIVO: OK`); sabotéandole la física
+  sale `RC=1`. Ese gate **no entra al paquete**, igual que `lint_tex.py`: el paquete lleva el paper,
+  sus fuentes y las figuras; las herramientas del taller quedan en el repo.
 
 ---
 
@@ -113,7 +143,8 @@ porque después el DOI es permanente.
 
 ```
 Source, bibliography and figure scripts are included in sfqed-paper-zenodo-20261010.tar.gz.
-main.pdf (146779 B, sha256 753e25234203a649…) is the version of record.
+main.pdf (146772 B, sha256 b8209e911e8d8b20…) is the version of record.
+Reproducible build: SOURCE_DATE_EPOCH=1791590400 tectonic main.tex.
 Compiled with tectonic 0.17.0; RevTeX 4-2. The package contains no auxiliary build byproducts.
 ```
 
@@ -129,7 +160,7 @@ Compiled with tectonic 0.17.0; RevTeX 4-2. The package contains no auxiliary bui
    el acta madre y `ADENDA_1`/`ADENDA_2` quedan intactas.
 
 Gate de la anexión (pre-registrado): al recibir el DOI se **re-mide** `main.pdf`.
-Si no da `146 779 B · 753e25234203a649…`, el DOI **no se anexa** hasta declarar la divergencia.
+Si no da `146 772 B · b8209e911e8d8b20…`, el DOI **no se anexa** hasta declarar la divergencia.
 
 ---
 
