@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# 🔐 pre-push — escanea lo que estas a punto de SUBIR (no lo que ya commiteaste).
+# ---------------------------------------------------------------------------
+# POR QUE EXISTE
+# El pre-commit solo mira lo staged en el momento del commit. Un commit hecho
+# con `--no-verify`, o un commit viejo que nunca se subio, pasa limpio por el
+# pre-commit y sale al remoto igual. Este hook mira el rango que git va a
+# empujar: "todos los commits que existen en alguna rama local y NO en ningun
+# remoto" → exactamente lo que viaja.
+#
+# INSTALADO POR
+#   scripts/notas/../util/git-hooks/install.sh  (o el symlink manual)
+#   ln -sf ../../scripts/util/git-hooks/pre-push .git/hooks/pre-push
+#
+# BYPASS (solo si sabes lo que haces): git push --no-verify
+#
+# FAIL-CLOSED desde 30-Sep-2026: sin binario de gitleaks el push ABORTA (exit 2).
+# Antes avisaba y dejaba pasar (exit 0): el candado existia solo en el papel.
+# ---------------------------------------------------------------------------
+set -u
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$ROOT" || exit 0
+
+# RESOLUCIÓN DEL BINARIO (fail-closed, sin falso «no instalado»).
+# Se busca en PATH y ADEMÁS en rutas absolutas conocidas: los clientes gráficos
+# (VS Code, Tower, Fork) lanzan los hooks con PATH mínimo sin /opt/homebrew.
+GITLEAKS_BIN=""
+if command -v gitleaks >/dev/null 2>&1; then
+  GITLEAKS_BIN="$(command -v gitleaks)"
+else
+  for C in /opt/homebrew/bin/gitleaks /usr/local/bin/gitleaks /opt/local/bin/gitleaks; do
+    if [ -x "$C" ]; then GITLEAKS_BIN="$C"; break; fi
+  done
+fi
+
+if [ -z "$GITLEAKS_BIN" ] || [ ! -x "$GITLEAKS_BIN" ]; then
+  echo "⛔ FAIL-CLOSED [gitleaks]: sin binario no hay escaner, y sin escaner no hay push." >&2
+  echo "   Buscado en PATH y en /opt/homebrew/bin · /usr/local/bin · /opt/local/bin." >&2
+  echo "   Instalalo: brew install gitleaks" >&2
+  echo "   (Bypass consciente, fuera del hook: git push --no-verify)" >&2
+  exit 2
+fi
+
+# ¿hay algo que empujar? Si no, no se escanea nada.
+PENDIENTES="$(git log --oneline --branches --not --remotes 2>/dev/null | wc -l | tr -d ' ')"
+if [ "$PENDIENTES" = "0" ]; then
+  echo "🔐 gitleaks pre-push: nada nuevo que empujar."
+  exit 0
+fi
+
+echo "🔐 gitleaks pre-push: escaneando $PENDIENTES commit(s) que no estan en ningun remoto..."
+
+# EL ARGV SE ARMA COMPLETO (array CMD); NO se expande un array de flags.
+# Defecto medido el 30-Sep-2026 en banco aislado (byte a byte): el idiom
+#   "${ARGS[@]+\"${ARGS[@]}\"}"      <- con BACKSLASH literal dentro del archivo
+# deja las comillas como CARACTERES, no como sintaxis: gitleaks recibe `"-c` y
+# `.gitleaks.toml"` como dos POSICIONALES (mas el repo `.` = 3) y muere con
+# «accepts at most 1 arg(s), received 3» sobre un repo LIMPIO. Con el .toml ausente
+# el array esta vacio, la expansion no emite nada y todo pasa: por eso el banco sin
+# config salia verde y el hook estaba rojo en la casa. Armando el argv completo no
+# hay array vacio (nada que `set -u` mate) ni comilla que pueda quedar literal.
+CMD=("$GITLEAKS_BIN" git .)
+if [ -f .gitleaks.toml ]; then CMD+=("-c" ".gitleaks.toml"); fi
+CMD+=(--log-opts="--branches --not --remotes" --no-banner --redact)
+
+SALIDA="$("${CMD[@]}" 2>&1)"
+RC=$?
+printf '%s\n' "$SALIDA"
+
+if [ "$RC" -eq 0 ]; then
+  echo "✅ gitleaks: sin secretos en lo que se va a subir."
+  exit 0
+fi
+
+# RC≠0 NO significa «hay un secreto»: gitleaks devuelve 1 tambien cuando muere por
+# argumentos, config o permisos. Antes, CUALQUIER RC≠0 imprimia «SECRETO DETECTADO»
+# = un veredicto sobre el OBJETO emitido por un fallo del METRO. Se discrimina por la
+# marca que gitleaks escribe SOLO cuando halla («Finding:» / «Secret:» / «leaks found:
+# N»); «no leaks found» NO matchea. Sin marca, el escaner no decidio.
+HALLAZGOS="$(printf '%s' "$SALIDA" | grep -c -E 'Finding:|Secret:|leaks found: [0-9]')"
+if [ "${HALLAZGOS:-0}" -gt 0 ]; then
+  echo ""
+  echo "❌ SECRETO(S) DETECTADO(S) — push bloqueado (valores redactados arriba)."
+  echo "   1. Identifica la credencial por el nombre de la regla."
+  echo "   2. ROTALA en su panel (una credencial rotada ya no sirve aunque siga escrita)."
+  echo "   3. Quita el valor del archivo y commitea de nuevo."
+  echo "   4. Si el commit viejo es el que trae el secreto:"
+  echo "        git rebase -i <base>   (editar)  ·  o  git filter-repo --path <archivo> --invert-paths"
+  echo "   Bypass consciente: git push --no-verify"
+  exit 1
+fi
+
+echo ""
+echo "⛔ FALLO DEL METRO [gitleaks]: el escaner NO llego a decidir (exit $RC, 0 hallazgos)." >&2
+echo "   Su salida cruda esta arriba. NADA se afirma sobre los commits que vas a subir." >&2
+echo "   Repara el escaner/config; si es urgente: git push --no-verify" >&2
+exit 2

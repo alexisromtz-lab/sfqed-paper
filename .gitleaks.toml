@@ -1,0 +1,144 @@
+# 🔐 .gitleaks.toml — reglas del ecosistema Platino (16-Sep-2026)
+# ---------------------------------------------------------------------------
+# POR QUE EXISTE
+# gitleaks trae ~150 reglas por defecto, pero NO conoce los prefijos de las
+# herramientas de esta casa. Un `tskey-`, un `shpat_`, un `sk-or-v1-` o una
+# `AIza` pasan sin que nadie los mire. Estas reglas los nombran.
+#
+# `useDefault = true` conserva TODO el catalogo por defecto y ADEMAS suma lo de
+# abajo. Nunca reemplaza: extiende.
+#
+# USO
+#   gitleaks git --staged --no-banner --redact -c .gitleaks.toml      # pre-commit
+#   gitleaks git --log-opts="--branches --not --remotes" -c .gitleaks.toml
+#   gitleaks dir . -c .gitleaks.toml -f json -r /tmp/secreto.json     # arbol
+#
+# PROHIBIDO
+# Meter un path en `allowlist` para "que deje de molestar". Si una ruta da
+# hallazgos, el que esta mal es el contenido, no la regla.
+# ---------------------------------------------------------------------------
+
+title = "platino labs — reglas del ecosistema"
+
+[extend]
+useDefault = true
+
+# ── Red privada e instancias ───────────────────────────────────────────────
+[[rules]]
+id = "platino-tailscale-authkey"
+description = "Tailscale auth key (abre la red privada: Mac + boxes)"
+regex = '''tskey-[a-z0-9]+-[A-Za-z0-9]{10,}'''
+keywords = ["tskey-"]
+
+# ── Proveedores de modelo ──────────────────────────────────────────────────
+[[rules]]
+id = "platino-deepseek"
+description = "Clave DeepSeek (sk- + 32 hex)"
+regex = '''\bsk-[a-f0-9]{32}\b'''
+keywords = ["sk-"]
+
+[[rules]]
+id = "platino-openrouter"
+description = "Clave OpenRouter (sk-or-v1-)"
+regex = '''sk-or-v1-[a-f0-9]{32,}'''
+keywords = ["sk-or-v1-"]
+
+[[rules]]
+id = "platino-anthropic"
+description = "Clave Anthropic (sk-ant-)"
+regex = '''sk-ant-[A-Za-z0-9_\-]{20,}'''
+keywords = ["sk-ant-"]
+
+[[rules]]
+id = "platino-groq"
+description = "Clave Groq (gsk_)"
+regex = '''gsk_[A-Za-z0-9]{40,}'''
+keywords = ["gsk_"]
+
+[[rules]]
+id = "platino-nvidia"
+description = "Clave NVIDIA (nvapi-)"
+regex = '''nvapi-[A-Za-z0-9_\-]{30,}'''
+keywords = ["nvapi-"]
+
+[[rules]]
+id = "platino-elevenlabs"
+description = "Clave ElevenLabs (sk_ + 40+ hex)"
+regex = '''\bsk_[a-f0-9]{40,}\b'''
+keywords = ["sk_"]
+
+# ── Tienda, anuncios y publicacion ─────────────────────────────────────────
+[[rules]]
+id = "platino-shopify-token"
+description = "Token de Shopify (shpat_ / shpca_ / shppa_ / shpss_)"
+regex = '''shp(?:at|ca|pa|ss)_[a-f0-9]{32}'''
+keywords = ["shpat_", "shpca_", "shppa_", "shpss_"]
+
+[[rules]]
+id = "platino-meta-token"
+description = "Token de Meta / Graph (EAA...)"
+regex = '''EAA[A-Za-z0-9]{60,}'''
+keywords = ["EAA"]
+
+[[rules]]
+id = "platino-google-api"
+description = "Clave de API de Google (AIza...)"
+regex = '''AIza[0-9A-Za-z_\-]{35}'''
+keywords = ["AIza"]
+
+[[rules]]
+id = "platino-mercadolibre"
+description = "Credencial de Mercado Libre (APP_USR-)"
+regex = '''APP_USR-[A-Za-z0-9_\-]{20,}'''
+keywords = ["APP_USR-"]
+
+[[rules]]
+id = "platino-replicate"
+description = "Token de Replicate (r8_)"
+regex = '''r8_[A-Za-z0-9]{30,}'''
+keywords = ["r8_"]
+
+[[rules]]
+id = "platino-huggingface"
+description = "Token de Hugging Face (hf_)"
+regex = '''hf_[A-Za-z0-9]{30,}'''
+keywords = ["hf_"]
+
+[[rules]]
+id = "platino-apify"
+description = "Token de Apify (apify_api_)"
+regex = '''apify_api_[A-Za-z0-9]{20,}'''
+keywords = ["apify_api_"]
+
+[[rules]]
+id = "platino-supabase"
+description = "Clave de servicio de Supabase (sbp_)"
+regex = '''sbp_[a-f0-9]{40}'''
+keywords = ["sbp_"]
+
+# ── Contrasenas escritas a mano (voz del duenio en notas y chats) ──────────
+# No busca el valor: busca la ETIQUETA seguida de un valor en la linea
+# siguiente. Es exactamente el formato en que se filtraron las contrasenas
+# de las notas (#1 NUBE.CASSIEL, #39 GitHub, #78 Hetzner).
+#
+# Medido el 16-Sep-2026. La version original
+#   `[^\n]{0,20}\n[ \t]*\S{6,}`
+# daba 9 hallazgos en el corpus de notas de los cuales **8 eran ruido** (lineas
+# de HTML `<div>…` y de JSON `([TAPADO]_Uw",`) y 2 falsos positivos en el repo
+# (una lista de etiquetas dentro de un regex y la prosa del reporte). Un
+# escaner que grita en falso termina saltandose con `--no-verify`, que es
+# exactamente el agujero que esto tapa.
+# Ahora: el valor tiene que ser LA LINEA COMPLETA (de ahi el `$`), sin
+# `< > { } " ' [ ]`, y de 6 caracteres para arriba. Eso deja fuera HTML y JSON,
+# y conserva la forma real: `Hetzner contraseña` y debajo `(s@J…` (1/1 medido).
+[[rules]]
+id = "platino-contrasena-en-linea"
+description = "Etiqueta de contrasena con el valor pegado debajo"
+regex = '''(?i)(?:contrase[nñ]a|contrasena|password|passwd|clave de app)[^\n]{0,20}\n[ \t]*[^\s<>{}"'\[\]]{6,}[ \t]*(?:\n|$)'''
+keywords = ["contraseña", "contrasena", "password", "passwd", "clave de app"]
+
+[[rules]]
+id = "platino-secreto-declarado"
+description = "SECRETO = \"...\" o SECRET: ... en un script de la casa"
+regex = '''(?i)\b(?:ftp_pass|mega_pass|vps_root_password|webhook_secret|internal_api_key)\b\s*[:=]\s*["']?[^\s"']{8,}'''
+keywords = ["ftp_pass", "mega_pass", "vps_root_password", "webhook_secret", "internal_api_key"]
