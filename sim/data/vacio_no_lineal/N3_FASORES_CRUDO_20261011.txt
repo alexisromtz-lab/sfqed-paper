@@ -1,0 +1,43 @@
+# N3_FASORES_CRUDO_20261011 -- rho_HE = c_* (F^2 + 7 G^2)/E_cr^4 en el foco
+# CLAUSULA: N3 del PREREGISTRO_VACIO_NO_LINEAL_20261011.md §7 (constante + UNA linea en 4w,
+#   razon 3/4, sin linea en 1w ni 2w; cotas de linea 1e-3 de la constante).
+# CAMINO: suma EXACTA de fasores de sim/field_solver.py en malla 61^3, nodo del foco.
+#   NO es FDTD; sim/maxwell2d.py no se importa. Costo sobre la huella del solver: 0.
+# LEY: F = (1/2)(|E|^2 - |B|^2), G = E.B, |B_E| = c|B|; rho homogenea de grado 4 en los campos.
+# MOTOR: python3 -B, numpy 2.4.6, malla de nodos impar y simetrica (el foco ES un nodo).
+# UNIDAD: campos en unidades de la amplitud por haz E_0 = 1; rho en unidades de E_0^4.
+# VENTANA UTC: 2026-10-11T18:33:54Z
+# SHA16 DE LAS ENTRADAS (medidas fuera, no citadas): field_solver.py=8cfca6a9bff5fee7 maxwell2d.py=1db75ea7b0b8cba4 main.tex=90bfcb2b73ff9855 pre-registro=be456faa7a73dbf9
+# CONTROL P1 (sensor): 1 + 0.75 cos(4 th) -> razon recuperada, se imprime abajo.
+# CONTROL P2 (geometria): coaxial_contra -> B = 0 en el foco, F constante -> sin linea 4w.
+# CONTROL P3 (nulo 2w): estrella polarizacion lineal -> SI tiene 2w (la cota puede enrojecer).
+# CONTROL P4: el pre-registro no fija la banda de la razon; se usa su propia cota de
+#   lineas (1e-3) como banda operativa. ELEGIDA, declarada.
+# COLUMNAS: fila,rol,caso,pol,alpha_deg,N,env,m_fase,nodos,dc,amp1_rel,amp2_rel,
+#   amp3_rel,amp4_rel,amp5_rel,amp6_rel,maxrel_otras,razon4,delta_teo_rel
+#   rol=JUICIO juzga la clausula N3 (cono circular); los CONTROL se miden y se declaran,
+#   NO se juzgan: P2 debe dar 4w sin linea, P3 debe dar 2w con linea.
+# RESULTADO: CONFORME · los tres puntos de N3 (forma, razon, nulos) medidos.
+# P1 sensor  1+0.75 cos4th  dc=0.9999999999999999  razon4=0.7499999999999999  delta=1.110e-16  ok=True
+1,JUICIO,estrella,circular,15.0,2,1,32,61,7.179676972449e-02,1.820041e-16,8.101481e-17,7.562937e-17,7.500000e-01,1.160771e-16,8.910113e-17,3.382854e-16,0.7499999999999997,3.313588e-16
+2,JUICIO,estrella,circular,30.0,2,1,32,61,1.000000000000e+00,2.408333e-16,1.355882e-16,1.149370e-16,7.500000e-01,1.349590e-16,1.779638e-16,3.376612e-16,0.7499999999999996,3.806479e-16
+3,JUICIO,estrella,circular,45.0,2,1,32,61,4.000000000000e+00,2.434107e-16,8.417273e-17,1.391541e-16,7.500000e-01,1.911304e-16,1.183873e-16,3.330669e-16,0.7499999999999997,3.806479e-16
+4,JUICIO,estrella,circular,60.0,2,1,32,61,9.000000000000e+00,1.118817e-16,1.093108e-16,1.504057e-16,7.500000e-01,1.569880e-16,1.595725e-16,2.960595e-16,0.7499999999999997,3.383537e-16
+5,JUICIO,estrella,circular,90.0,2,1,32,61,1.600000000000e+01,2.172642e-16,4.079436e-17,7.816596e-17,7.500000e-01,8.045976e-17,1.424648e-16,2.846097e-16,0.7499999999999998,5.075305e-16
+6,JUICIO,estrella,circular,15.0,4,1,32,61,1.148748315592e+00,1.820041e-16,8.101481e-17,7.562937e-17,7.500000e-01,1.160771e-16,8.910113e-17,3.382854e-16,0.7499999999999997,3.313588e-16
+7,JUICIO,estrella,circular,30.0,4,1,32,61,1.600000000000e+01,2.408333e-16,1.355882e-16,1.149370e-16,7.500000e-01,1.349590e-16,1.779638e-16,3.376612e-16,0.7499999999999996,3.806479e-16
+8,JUICIO,estrella,circular,45.0,4,1,32,61,6.400000000000e+01,2.434107e-16,8.417273e-17,1.391541e-16,7.500000e-01,1.911304e-16,1.183873e-16,3.330669e-16,0.7499999999999997,3.806479e-16
+9,JUICIO,estrella,circular,60.0,4,1,32,61,1.440000000000e+02,1.118817e-16,1.093108e-16,1.504057e-16,7.500000e-01,1.569880e-16,1.595725e-16,2.960595e-16,0.7499999999999997,3.383537e-16
+10,JUICIO,estrella,circular,90.0,4,1,32,61,2.560000000000e+02,2.172642e-16,4.079436e-17,7.816596e-17,7.500000e-01,8.045976e-17,1.424648e-16,2.846097e-16,0.7499999999999998,5.075305e-16
+11,JUICIO,estrella,circular,15.0,16,1,32,61,2.940795687915e+02,1.820041e-16,8.101481e-17,7.562937e-17,7.500000e-01,1.160771e-16,8.910113e-17,3.382854e-16,0.7499999999999997,3.313588e-16
+12,JUICIO,estrella,circular,30.0,16,1,32,61,4.096000000000e+03,2.408333e-16,1.355882e-16,1.149370e-16,7.500000e-01,1.349590e-16,1.779638e-16,3.376612e-16,0.7499999999999996,3.806479e-16
+13,JUICIO,estrella,circular,45.0,16,1,32,61,1.638400000000e+04,2.185499e-16,1.634332e-16,7.191511e-17,7.500000e-01,1.681992e-16,1.065103e-16,3.330669e-16,0.7499999999999997,1.649474e-15
+14,JUICIO,estrella,circular,60.0,16,1,32,61,3.686400000000e+04,2.262622e-16,5.096500e-17,4.267873e-17,7.500000e-01,9.576792e-17,1.840296e-16,2.976185e-16,0.7499999999999996,1.466199e-15
+15,JUICIO,estrella,circular,90.0,16,1,32,61,6.553600000000e+04,2.172642e-16,4.079436e-17,7.816596e-17,7.500000e-01,8.045976e-17,1.424648e-16,2.846097e-16,0.7499999999999998,5.075305e-16
+16,CONTROL-P2,coaxial_contra,circular,0.0,4,1,32,61,6.400000000000e+01,1.686478e-17,6.205035e-17,4.570426e-17,2.775558e-17,5.389478e-17,4.385789e-17,7.093231e-17,0.0000000000000000,nan
+17,CONTROL-P3,estrella,lineal,30.0,4,1,32,61,1.500000000000e+00,3.900759e-16,1.333333e+00,8.471962e-17,3.333333e-01,2.024579e-16,1.474096e-16,1.333333e+00,0.3333333333333334,nan
+18,CONTROL-env,estrella,circular,30.0,4,0,32,61,1.600000000000e+01,2.408333e-16,1.355882e-16,1.149370e-16,7.500000e-01,1.349590e-16,1.779638e-16,3.376612e-16,0.7499999999999996,3.806479e-16
+19,CONTROL-malla,estrella,circular,30.0,4,1,32,121,1.600000000000e+01,2.408333e-16,1.355882e-16,1.149370e-16,7.500000e-01,1.349590e-16,1.779638e-16,3.376612e-16,0.7499999999999996,3.806479e-16
+20,CONTROL-fases,estrella,circular,30.0,4,1,64,61,1.600000000000e+01,1.169010e-16,1.136896e-16,8.611117e-17,7.500000e-01,1.572517e-16,6.947437e-17,2.812715e-16,0.7499999999999999,5.075305e-16
+# P3 estrella lineal: 2w/dc = 1.333333e+00  (control positivo del nulo: 2w SI existe)
+# P2 coaxial_contra: dc = 6.400000000000e+01  4w/dc = 2.776e-17
