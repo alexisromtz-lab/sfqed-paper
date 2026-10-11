@@ -1,0 +1,104 @@
+--- runner_2d3v.py CONGELADO sha16=368627d18d83d253
++++ runner_2d3v.py PARCHEADO sha16=f280fb6744917e9a
+@@ -69,5 +69,9 @@
+ # conserva el nombre canonico porque es EXACTAMENTE la ruta que lee sim/falsador.py;
+ # la circular escribe un archivo propio.
+-CSV_NOMBRE = {"linear": "medidas_aN.csv", "circular": "medidas_aN_circular.csv"}
++CSV_NOMBRE = {"linear": "medidas_aN.csv", "circular": "medidas_aN_circular.csv",
++              # Tercera clave (11-Oct-2026): un barrido de FASES por haz escribe
++              # su propio archivo.  La serie canonica LINEAL queda intacta: es la
++              # ruta exacta que lee sim/falsador.py.
++              "fases": "medidas_aN_fases.csv"}
+ CSV = AQUI / CSV_NOMBRE["linear"]      # ruta canonica = la que lee el falsador
+ 
+@@ -197,5 +201,5 @@
+ 
+ 
+-def campos(N, pol, dl_lambda=0.0, ref=None):
++def campos(N, pol, dl_lambda=0.0, ref=None, fases=None):
+     """E(r,t) = Re[Ep e^{-i w t}] = R0(r) cos(wt) + R1(r) sin(wt); seis componentes."""
+     xg, yg, h = _malla()
+@@ -205,5 +209,8 @@
+     for j in range(N):
+         th0 = 2.0 * math.pi * j / N
+-        fase = -2.0 * math.pi * dl_lambda if (j == N - 1 and dl_lambda != 0.0) else 0.0
++        if fases is not None:
++            fase = float(fases[j % len(fases)])
++        else:
++            fase = -2.0 * math.pi * dl_lambda if (j == N - 1 and dl_lambda != 0.0) else 0.0
+         am0 = a_b(N, ref)
+         for k, comps in COMPS_DE_CLAVE.items():
+@@ -255,6 +262,6 @@
+ 
+ 
+-def correr(N, pol, dl_lambda, pasos, verbose=True, ref=None):
+-    F0, F1 = campos(N, pol, dl_lambda, ref)
++def correr(N, pol, dl_lambda, pasos, verbose=True, ref=None, fases=None):
++    F0, F1 = campos(N, pol, dl_lambda, ref, fases)
+     Ex, Ey, Ez = F0["Ex"].copy(), F0["Ey"].copy(), F0["Ez"].copy()
+     # leapfrog: E en t = n*dt, H en t = (n+1/2)*dt  =>  H se inicializa en el SEMI-PASO
+@@ -423,4 +430,9 @@
+     ap.add_argument("--pasos", type=int, default=PASOS_TOTAL)
+     ap.add_argument("--json", action="store_true")
++    # 11-Oct-2026: banderas nuevas, cableadas al NOMBRE (CSV_NOMBRE) y a la
++    # RUTA (el escritor del CSV, mas abajo).  Sin ellas, nada cambia.
++    ap.add_argument("--salida", default="")     # ruta propia del CSV de ESTA corrida
++    ap.add_argument("--fases", default="")      # fases por haz, separadas por coma
++    ap.add_argument("--sigma-phi", default="")  # grupo sigma_phi que declara quien llama
+     a = ap.parse_args()
+ 
+@@ -455,9 +467,13 @@
+         return 0
+ 
++    fases = [float(x) for x in a.fases.replace(";", ",").split(",") if x.strip()] or None
++    sigma_phi = a.sigma_phi.strip() or "no_declarado"
++    print(f"fases por haz (rad) = {fases}")
++    print(f"sigma_phi (grupo declarado por quien llama) = {sigma_phi}")
+     pre_registro(a.pol, a.dl, a.pasos)
+     lista = N_LISTA if a.todo else ([a.n] if a.n else [1])
+     rs = []
+     for N in lista:
+-        r = correr(N, a.pol, a.dl, a.pasos)
++        r = correr(N, a.pol, a.dl, a.pasos, fases=fases)
+         rs.append(r)
+         print(fila(r))
+@@ -470,5 +486,9 @@
+         f"N={r['N']:2d}: {r['e_rel']:.2e}" for r in rs))
+ 
+-    if a.todo and a.dl == 0.0:
++    # GUARDA RELAJADA (11-Oct-2026): la condicion original protegia la ruta
++    # canonica de una corrida con desajuste declarado.  Si quien llama NOMBRA la
++    # ruta (--salida), esa proteccion no aplica: la canonica no esta en riesgo.
++    con_grupo = bool(a.sigma_phi.strip()) or bool(a.salida)
++    if a.todo and (a.dl == 0.0 or a.salida):
+         cab = ("# a_medido = (e/(m_e c omega)) * max_(r en Omega_foco, t) |E(r,t)|\n"
+                "# medido con sim/runner_2d3v.py (FDTD Yee 2D3V, numpy, c = omega = k = 1)\n"
+@@ -476,6 +496,18 @@
+                f"# pol = {a.pol} ; Omega_foco = |r| <= w0 ; N_LISTA = {N_LISTA} ; "
+                f"hora = {hora()}\n")
+-        cuerpo = "".join(f"{r['N']},{r['a_fdtd']:.10f}\n" for r in rs)
+-        csv_pol = AQUI / CSV_NOMBRE[a.pol]
++        if con_grupo:
++            cab += (f"# sigma_phi = {sigma_phi} ; desajuste declarado = {a.dl} ; "
++                    f"fases_por_haz = {fases}\n"
++                    "# columnas: N,a_medido,sigma_phi  (las DOS primeras son las que "
++                    "lee sim/falsador.py; la tercera es la clave de grupo)\n")
++        cuerpo = "".join(
++            (f"{r['N']},{r['a_fdtd']:.10f},{sigma_phi}\n" if con_grupo
++             else f"{r['N']},{r['a_fdtd']:.10f}\n") for r in rs)
++        if a.salida:
++            csv_pol = Path(a.salida)
++        elif fases is not None:
++            csv_pol = AQUI / CSV_NOMBRE["fases"]
++        else:
++            csv_pol = AQUI / CSV_NOMBRE[a.pol]
+         csv_pol.write_text(cab + cuerpo, encoding="utf-8")
+         hh = hashlib.sha256(csv_pol.read_bytes()).hexdigest()[:16]
+@@ -485,5 +517,6 @@
+             print(f"  (la ruta canonica {CSV} NO se toco: es la serie LINEAL del falsador)")
+     elif a.todo:
+-        print(f"CSV NO escrito: hay desajuste declarado (--dl {a.dl}); esta corrida es el NULO")
++        print(f"CSV NO escrito: hay desajuste declarado (--dl {a.dl}) y no se dio ruta "
++              f"propia; esta corrida es el NULO (para escribirla, pasar --salida)")
+ 
+     if a.json:

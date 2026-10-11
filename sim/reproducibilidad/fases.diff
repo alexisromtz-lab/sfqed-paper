@@ -1,0 +1,57 @@
+--- runner_2d3v_frozen.py
++++ runner_2d3v.py
+@@ -196,7 +196,7 @@
+ COMPS_DE_CLAVE = {0: ("Ez",), 1: ("Ey", "Hx"), 2: ("Ex", "Hy"), 3: ("Hz",)}
+ 
+ 
+-def campos(N, pol, dl_lambda=0.0, ref=None):
++def campos(N, pol, dl_lambda=0.0, ref=None, fases=None):
+     """E(r,t) = Re[Ep e^{-i w t}] = R0(r) cos(wt) + R1(r) sin(wt); seis componentes."""
+     xg, yg, h = _malla()
+     NODOS = {0: (xg, yg), 1: (xg, yg + h), 2: (xg + h, yg), 3: (xg + h, yg + h)}
+@@ -204,7 +204,10 @@
+     F1 = {c: np.zeros((NX, NY)) for c in COMP}
+     for j in range(N):
+         th0 = 2.0 * math.pi * j / N
+-        fase = -2.0 * math.pi * dl_lambda if (j == N - 1 and dl_lambda != 0.0) else 0.0
++        if fases is not None:
++            fase = float(fases[j % len(fases)])
++        else:
++            fase = -2.0 * math.pi * dl_lambda if (j == N - 1 and dl_lambda != 0.0) else 0.0
+         am0 = a_b(N, ref)
+         for k, comps in COMPS_DE_CLAVE.items():
+             Xc, Yc = NODOS[k]
+@@ -254,8 +257,8 @@
+     return E2, B2, F, G, a
+ 
+ 
+-def correr(N, pol, dl_lambda, pasos, verbose=True, ref=None):
+-    F0, F1 = campos(N, pol, dl_lambda, ref)
++def correr(N, pol, dl_lambda, pasos, verbose=True, ref=None, fases=None):
++    F0, F1 = campos(N, pol, dl_lambda, ref, fases)
+     Ex, Ey, Ez = F0["Ex"].copy(), F0["Ey"].copy(), F0["Ez"].copy()
+     # leapfrog: E en t = n*dt, H en t = (n+1/2)*dt  =>  H se inicializa en el SEMI-PASO
+     _ch, _sh = math.cos(0.5 * DTn), math.sin(0.5 * DTn)
+@@ -420,6 +423,7 @@
+     ap.add_argument("--todo", action="store_true")
+     ap.add_argument("--pol", default="linear", choices=["linear", "circular"])
+     ap.add_argument("--dl", type=float, default=0.0)
++    ap.add_argument("--fases", default="")
+     ap.add_argument("--pasos", type=int, default=PASOS_TOTAL)
+     ap.add_argument("--json", action="store_true")
+     a = ap.parse_args()
+@@ -454,11 +458,13 @@
+         print(f"  U / (U_1 * e^2) = {c['ley_U_sobre_U1_e2']}  (debe ser ~1: U va como a_b^2)")
+         return 0
+ 
++    fases = [float(x) for x in a.fases.replace(";", ",").split(",") if x.strip()] or None
++    print(f"fases por haz (rad) = {fases}")
+     pre_registro(a.pol, a.dl, a.pasos)
+     lista = N_LISTA if a.todo else ([a.n] if a.n else [1])
+     rs = []
+     for N in lista:
+-        r = correr(N, a.pol, a.dl, a.pasos)
++        r = correr(N, a.pol, a.dl, a.pasos, fases=fases)
+         rs.append(r)
+         print(fila(r))
+ 
