@@ -1,0 +1,107 @@
+{
+  "MAPPING": {
+    "EPOCH2015": {
+      "a0": "laser.intensity (via a0)",
+      "dx": "nx / length_x",
+      "lambda0": "laser.wavelength",
+      "pasos": "nsteps",
+      "polarizacion": "laser.polarisation",
+      "salida_campos": "output.dump_first"
+    },
+    "Smilei2018": {
+      "a0": "laser.amplitude",
+      "dx": "grid.length",
+      "lambda0": "laser.wavelength",
+      "pasos": "main.n_step",
+      "polarizacion": "laser.polarization_phi",
+      "salida_campos": "diag_fields.dump_step"
+    },
+    "WarpX2022": {
+      "a0": "warpx.a0",
+      "dx": "amr.n_cell / amr.max_level",
+      "lambda0": "warpx.lambda0",
+      "pasos": "max_step",
+      "polarizacion": "warpx.polarization",
+      "salida_campos": "warpx.plot_int"
+    }
+  },
+  "N_LISTA": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "SIGMA_J": 100.0,
+  "T_UTC": "2026-10-11T00:04:49Z",
+  "UNIVERSO DECLARADO": "sim/params.py (SI, lambda_L=0.8um) + una Sigma y una malla de N ELEGIDAS; modelo de reparto coherente declarado abajo",
+  "a_ref_N_1": 170.53380233310853,
+  "controles_obligatorios": [
+    "una sola onda plana -> a0 debe dar 0 (Lemma 1: F=G=0)",
+    "desajuste DeltaL = lambda/2 -> el escalado debe romperse",
+    "lineal -> F cambia de signo y G = 0; circular -> F,G quietos",
+    "energia total conservada dentro de la tolerancia declarada"
+  ],
+  "filas": [
+    {
+      "E0_tot_V_m": 684416332271534.8,
+      "E_por_pulso_J": 100.0,
+      "I_tot_W_cm2": 1.2433979929054322e+23,
+      "N": 1,
+      "a_beam": 170.53380233310853,
+      "a_tot_pred": 170.53380233310853,
+      "beta_pred": 0.5
+    },
+    {
+      "E0_tot_V_m": 967910859408055.2,
+      "E_por_pulso_J": 50.0,
+      "I_tot_W_cm2": 2.4867959858108654e+23,
+      "N": 2,
+      "a_beam": 120.58560805126731,
+      "a_tot_pred": 241.17121610253466,
+      "beta_pred": 0.5
+    },
+    {
+      "E0_tot_V_m": 1368832664543069.5,
+      "E_por_pulso_J": 25.0,
+      "I_tot_W_cm2": 4.973591971621729e+23,
+      "N": 4,
+      "a_beam": 85.26690116655426,
+      "a_tot_pred": 341.06760466621705,
+      "beta_pred": 0.5
+    },
+    {
+      "E0_tot_V_m": 1935821718816110.5,
+      "E_por_pulso_J": 12.5,
+      "I_tot_W_cm2": 9.947183943243462e+23,
+      "N": 8,
+      "a_beam": 60.29280402563366,
+      "a_tot_pred": 482.3424322050693,
+      "beta_pred": 0.5
+    },
+    {
+      "E0_tot_V_m": 2737665329086139.0,
+      "E_por_pulso_J": 6.25,
+      "I_tot_W_cm2": 1.9894367886486916e+24,
+      "N": 16,
+      "a_beam": 42.63345058327713,
+      "a_tot_pred": 682.1352093324341,
+      "beta_pred": 0.5
+    }
+  ],
+  "modelo": "energia total fija, tau fija, w0 fija, coincidencia perfecta, circular co-rotante -> a_tot(N) = sqrt(N) a_ref",
+  "numerica": {
+    "CFL": 0.9,
+    "caja_m": 9.6e-06,
+    "caja_sobre_lambda": 12.0,
+    "diag_cada_pasos": 20,
+    "dt_s": 6.004153713566738e-17,
+    "dx_m": 2e-08,
+    "dx_sobre_lambda": 0.025,
+    "lambda_m": 8e-07,
+    "n_pasos": 866,
+    "tau_s": 2e-14,
+    "unidades": "naturales hbar=c=1, m_e=1 para el motor; SI en esta tabla",
+    "w0_m": 1.6e-06
+  }
+}
