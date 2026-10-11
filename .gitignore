@@ -14,3 +14,14 @@
 .DS_Store
 __pycache__/
 *.pyc
+# corridas/ = salidas locales del instrumento tools/sello.sh, efimeras por diseno.
+# Queda FUERA del universo del bundle: el universo de bundle/ es find bundle/ -type f,
+# y bundle/HASHES.sha256 ni la contiene ni la evalua. Esta regla es del repo raiz,
+# no del bundle.
+corridas/*
+# Excepcion declarada: los dos crudos M0 versionados en el commit c6f1f05
+# (797e9b08ff0a2070 defecto del metro · 8a63de561cbe62af reparado). Ya estan
+# rastreados, y git no ignora lo rastreado: la negacion NO los sujeta — existe para
+# que la excepcion quede escrita y para que un git rm --cached posterior sea reversible.
+!corridas/20261011T055826Z_M0.txt
+!corridas/20261011T060043Z_M0.txt
