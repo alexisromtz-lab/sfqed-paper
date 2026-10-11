@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# 🔐 gitleaks pre-commit hook — bloquea commits con secretos en lo staged.
+# Instalado 20-Ago-2026 (gitleaks 8.30.1). Bypass temporal: git commit --no-verify
+# (usar SOLO si sabes lo que haces).
+#
+# FAIL-CLOSED desde 30-Sep-2026: si el binario no aparece, el commit ABORTA (exit 2).
+# Antes avisaba y dejaba pasar (exit 0) → el candado existía sólo en el papel.
+
+set -u
+
+cd "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || exit 0
+
+# RESOLUCIÓN DEL BINARIO (fail-closed, pero sin falso «no instalado»).
+# Se busca en PATH y ADEMÁS en las rutas absolutas conocidas: los clientes
+# gráficos (VS Code, Tower, Fork) lanzan los hooks con un PATH mínimo que no
+# incluye /opt/homebrew, y ahí `command -v` daría un rojo falso sobre un repo sano.
+GITLEAKS_BIN=""
+if command -v gitleaks >/dev/null 2>&1; then
+  GITLEAKS_BIN="$(command -v gitleaks)"
+else
+  for C in /opt/homebrew/bin/gitleaks /usr/local/bin/gitleaks /opt/local/bin/gitleaks; do
+    if [ -x "$C" ]; then GITLEAKS_BIN="$C"; break; fi
+  done
+fi
+
+if [ -z "$GITLEAKS_BIN" ] || [ ! -x "$GITLEAKS_BIN" ]; then
+  echo "⛔ FAIL-CLOSED [gitleaks]: sin binario no hay escáner, y sin escáner no hay commit." >&2
+  echo "   Buscado en PATH y en /opt/homebrew/bin · /usr/local/bin · /opt/local/bin." >&2
+  echo "   Instálalo: brew install gitleaks" >&2
+  echo "   (Bypass consciente, fuera del hook: git commit --no-verify)" >&2
+  exit 2
+fi
+
+# Las reglas de la casa (prefijos del ecosistema: tskey-, sk-or-v1-, shpat_, AIza,
+# APP_USR-...) viven en .gitleaks.toml. Se pasa explícito; si no existe, gitleaks
+# usa su catálogo por defecto.
+#
+# EL ARGV SE ARMA COMPLETO (array CMD); NO se expande un array de flags.
+# Defecto medido el 30-Sep-2026 en banco aislado (byte a byte): el idiom
+#   "${CFG[@]+\"${CFG[@]}\"}"        <- con BACKSLASH literal dentro del archivo
+# deja las comillas como CARACTERES, no como sintaxis. Cuando .gitleaks.toml EXISTE,
+# gitleaks recibe `"-c` y `.gitleaks.toml"` — dos POSICIONALES, no un flag — y muere
+# con «accepts at most 1 arg(s), received 2» sobre un repo LIMPIO, para acto seguido
+# imprimir «SECRETO DETECTADO». Cuando el .toml NO existe el array está vacío, la
+# expansión no emite nada y todo pasa: por eso el banco sin config salía verde
+# mientras el mismo hook estaba rojo en la casa.
+# Armando el argv completo desaparecen los dos problemas a la vez: no hay array vacío
+# (nada que `set -u` pueda matar) ni comilla que pueda quedar literal.
+CMD=("$GITLEAKS_BIN" git --staged)
+if [ -f .gitleaks.toml ]; then CMD+=("-c" ".gitleaks.toml"); fi
+CMD+=(--no-banner --redact)
+
+echo "🔐 gitleaks pre-commit: escaneando staged changes..."
+
+SALIDA="$("${CMD[@]}" 2>&1)"
+RC=$?
+printf '%s\n' "$SALIDA"
+
+if [ "$RC" -eq 0 ]; then
+  echo "✅ gitleaks: sin secretos en lo staged."
+  exit 0
+fi
+
+# RC≠0 NO significa «hay un secreto»: gitleaks devuelve 1 también cuando muere por
+# argumentos, config o permisos. Antes, CUALQUIER RC≠0 imprimía «SECRETO DETECTADO»
+# — un veredicto sobre el OBJETO emitido por un fallo del METRO (se vio con el staged
+# vacío). Se discrimina por la marca que gitleaks escribe SOLO cuando halla
+# («Finding:» / «Secret:» / «leaks found: N»); «no leaks found» NO matchea. Sin marca,
+# el escáner no decidió, y el hook lo dice en vez de inventar un secreto.
+HALLAZGOS="$(printf '%s' "$SALIDA" | grep -c -E 'Finding:|Secret:|leaks found: [0-9]')"
+if [ "${HALLAZGOS:-0}" -gt 0 ]; then
+  echo ""
+  echo "❌ SECRETO(S) DETECTADO(S) — commit bloqueado."
+  echo "   - Quita el archivo del commit o rota el secreto antes de continuar."
+  echo "   - Para forzar igual (NO recomendado): git commit --no-verify"
+  exit 1
+fi
+
+echo ""
+echo "⛔ FALLO DEL METRO [gitleaks]: el escáner NO llegó a decidir (exit $RC, 0 hallazgos)." >&2
+echo "   Su salida cruda está arriba. NADA se afirma sobre tus cambios: no se sabe." >&2
+echo "   Repara el escáner/config; si es urgente: git commit --no-verify" >&2
+exit 2
