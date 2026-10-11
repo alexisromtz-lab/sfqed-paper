@@ -1,0 +1,82 @@
+# medidas_aN_circular_corregida_20261011.csv — PESTANA 2 (circular corregida, sigma_phi por haz)
+# LECTURA = PICO: a_medido = (e/(m_e c omega)) * max_(r en |r| <= w0, t <= 260) |E(r,t)|
+# MOTOR = sim/runner_2d3v.py sha16=f280fb6744917e9a (528 l, 24072 B) = congelado 368627d18d83d253 + parche sim/parche_salida_fases.py sha16=87756c47d76267dd ; diff = sim/salida_fases.diff sha16=f7f826abc259f792
+# GEOMETRIA = sim/params.py sha16=9983b3d25a68f032 + sim/configs.json sha16=c7508e0430319162
+# PARAMETROS: pol = circular ; dl = 0.0 ; PASOS = 300 ; N_LISTA = [1, 2, 4, 8, 16] ; Omega_foco = |r| <= 80 celdas = 2 lambda_L ; malla 480x480 ; dx = lambda_L/40 ; CFL = 0.6
+# PRE-REGISTRO (sellado antes): sim/PREREGISTRO_PESTANA2_CIRCULAR_CORREGIDA_20261011.md sha16=d44cf0c5e948c04f
+# TESTIGO del control sigma=0: sim/medidas_aN_circular.csv sha16=ee5539f3f9efa96d
+# UNIDAD: fila del CSV ; UNIVERSO: este archivo ; VENTANA: reloj UTC
+# CLAVE por fila = sigma_phi (rad) ; 12 grupos x 5 N = 60 filas
+# columnas: sigma_phi,N,a_medido
+# --- grupo sigma_phi = 0.000 rad ; sha16_grupo = 9dad742e01a8075e ; filas = 5
+0.000,1,178.7553300762
+0.000,2,241.1697981457
+0.000,4,341.0655993725
+0.000,8,482.3408425826
+0.000,16,682.1331202323
+# --- grupo sigma_phi = 0.125 rad ; sha16_grupo = f58dd55e1cc3f741 ; filas = 5
+0.125,1,178.7549775221
+0.125,2,241.3536034814
+0.125,4,338.2970018383
+0.125,8,480.6128540349
+0.125,16,680.8921992598
+# --- grupo sigma_phi = 0.250 rad ; sha16_grupo = 12cf32ff7d98c66f ; filas = 5
+0.250,1,178.7509310924
+0.250,2,240.2153744373
+0.250,4,342.0584779667
+0.250,8,477.3604374399
+0.250,16,664.3860377256
+# --- grupo sigma_phi = 0.375 rad ; sha16_grupo = ff5e4e2178fd9974 ; filas = 5
+0.375,1,178.7504406893
+0.375,2,237.3053616999
+0.375,4,336.3408619393
+0.375,8,467.8053937070
+0.375,16,661.2436899573
+# --- grupo sigma_phi = 0.500 rad ; sha16_grupo = afb5e535212f4bed ; filas = 5
+0.500,1,178.7492051632
+0.500,2,230.4084064815
+0.500,4,324.5718423931
+0.500,8,463.7993480903
+0.500,16,630.8135098051
+# --- grupo sigma_phi = 0.625 rad ; sha16_grupo = 3ff4e5d5585dfb56 ; filas = 5
+0.625,1,178.7598733073
+0.625,2,251.9335761398
+0.625,4,344.3562320746
+0.625,8,468.2094983803
+0.625,16,618.9402536071
+# --- grupo sigma_phi = 0.750 rad ; sha16_grupo = 34b74213f4c05ba9 ; filas = 5
+0.750,1,178.7503589855
+0.750,2,243.0146194989
+0.750,4,269.6532933785
+0.750,8,357.3924629453
+0.750,16,523.3432277924
+# --- grupo sigma_phi = 1.000 rad ; sha16_grupo = 2414d3545018e6e9 ; filas = 5
+1.000,1,178.7532977302
+1.000,2,243.3684918072
+1.000,4,324.6586955199
+1.000,8,391.9806109317
+1.000,16,571.0505545949
+# --- grupo sigma_phi = 1.250 rad ; sha16_grupo = e3d30e210ba7eae6 ; filas = 5
+1.250,1,178.7465917043
+1.250,2,233.4678196559
+1.250,4,299.3901637725
+1.250,8,374.4440193707
+1.250,16,401.3417517748
+# --- grupo sigma_phi = 1.500 rad ; sha16_grupo = 28e1491320e3e0c5 ; filas = 5
+1.500,1,178.7483501542
+1.500,2,251.9543531932
+1.500,4,257.2982162867
+1.500,8,323.6793328980
+1.500,16,358.8990132375
+# --- grupo sigma_phi = 2.000 rad ; sha16_grupo = 0f9041031fc71a39 ; filas = 5
+2.000,1,178.7600046581
+2.000,2,240.2999987178
+2.000,4,325.4200064356
+2.000,8,437.0496396044
+2.000,16,367.2848656677
+# --- grupo sigma_phi = 3.000 rad ; sha16_grupo = 72494bdafc701e18 ; filas = 5
+3.000,1,178.7588150970
+3.000,2,230.4997244471
+3.000,4,303.8927616294
+3.000,8,379.9606237268
+3.000,16,401.0236178790

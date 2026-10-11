@@ -6,18 +6,37 @@ medidores que produjeron esas cifras y los instrumentos de custodia que impiden 
 secreto. No es un resumen de los resultados: es el **aparato de medida**, con la dirección de cada
 afirmación.
 
-**Cómo se verifica.** Un solo comando, `./verificar.sh`, que hace tres cosas y sale con un código de
+**Cómo se verifica.** Un solo comando, `./verificar.sh`, que hace cuatro fases y sale con un código de
 salida que no admite interpretación: `0` verde · `1` fractura del objeto · `2` contrato o medidor roto.
 No hay puerta de escape que devuelva verde.
 
 ```
-UNIVERSO DECLARADO: 25 archivos bajo bundle/  =  24 declarados en HASHES.sha256 (todos menos el propio
+UNIVERSO DECLARADO: 35 archivos bajo bundle/  =  34 declarados en HASHES.sha256 (todos menos el propio
                     manifiesto)  +  HASHES.sha256 (que no puede declararse a sí mismo)
+                    Era 26 / 25 antes de la enmienda de esta madrugada, que incorporó las 8 piezas de
+                    evidencia de la Pestaña 2 (§9). 26 + 8 = 34 y 25 + 8 = 33; con el acta del Paso 1 y
+                    del Paso 2 —la novena pieza de §9— quedan 34 y 35, y el orden es el de la aritmética:
+                    la cifra cuadra con el inventario, no con la memoria.
+BANCO:              tests/bench_must_fail.sh = 7 casos must-fail, cada uno sobre una copia efímera
+                    del bundle completo. NO se invoca desde verificar.sh: un verificador no se
+                    valida a sí mismo. Aquí solo se declara su hash, como el de cualquier pieza.
 MOTOR:              shasum -a 256 · cmp · grep -nF · python3 -B (stdlib) · git -C
+MOTOR_ID:           M0 = Darwin/anfitrión · M1 = GNU/Linux (`nix develop .#gnu`) · M? = núcleo no medido.
+                    El núcleo se MIDE con /usr/bin/uname -s en ruta absoluta, nunca desde el PATH:
+                    el banco corre el verificador con un PATH falso que no trae `uname`, y un metro
+                    que leyera su propio PATH mediría al banco en lugar del núcleo. El encabezado del
+                    contrato (MOTOR/SHA16/T_UTC) no se emite en los RC=2 de contrato roto: allí el
+                    motor que produce el SHA16 puede faltar (caso C: PATH sin `shasum`) y un contrato
+                    que no se puede medir no se imprime.
+COPIA (no enlace):  las 8 piezas de §9 entraron al bundle por `cp` y su sha256 se comprobó idéntico al
+                    del original en sim/ (8/8, `cmp` sin divergencia) ANTES de declararlas aquí. El
+                    bundle no apunta al objeto vivo: lo congela. Copiar no es citar: la copia se
+                    declara, o el hash certifica una copia que nadie nombró.
 UNIDAD:             archivo (inventario) · línea (anclas) · byte (identidad de custodia)
 VENTANA:            el reloj UTC que verificar.sh imprime en su encabezado; toda cifra de este índice
                     caduca al escribirse, y su hora es parte de la cifra
-T_UTC de redacción: 2026-10-11T04:42:37Z   ·   sha16 de este archivo: el que imprime ./verificar.sh
+T_UTC de redacción: 2026-10-11T04:42:37Z   ·   enmienda (universo + §9): 2026-10-11T06:05Z
+                    sha16 de este archivo: el que imprime ./verificar.sh
 ```
 
 ---
@@ -114,7 +133,194 @@ solo hecho** — se declaran las dos.
 3. **Cero modificaciones a los archivos medidos.** Durante el sellado no se tocó ningún archivo de `sim/`
    ni de documentación: sólo se copiaron. La frontera se mantiene por diseño.
 4. **Una cifra sin hora no es cifra.** Los `T_UTC` de las actas son los suyos, dentro de su propio texto;
-   este índice no los re-fecha. La única hora de este archivo es la de redacción de arriba.
+   este índice no los re-fecha. Las horas de este archivo son dos y cada una se declara en su línea: la de
+   redacción de arriba y la de la enmienda §7.
 5. **Lo que este índice no afirma.** No afirma que β = 0.5 sea el resultado físicamente correcto: afirma
    que **3 objetos distintos producen el mismo veredicto**, que es una propiedad del **metro**, no del
    objeto. Distinguir esas dos cosas es el contenido entero de esta pieza.
+
+---
+
+## 7. El banco must-fail: quién mide al metro (enmienda de 2026-10-11T05:34:09Z)
+
+**Qué es.** `tests/bench_must_fail.sh` es el banco que mide al verificador **desde afuera**. No se invoca
+desde `verificar.sh`: un verificador no se valida a sí mismo (la ley que ya regía para el `selftest` del
+medidor). Corre **7 casos**, cada uno sobre una copia efímera del bundle completo, y cada caso exige **el
+código de salida estricto Y la causa impresa**: un caso que devuelve el código esperado por otro motivo no
+discrimina, y entonces el banco no mide lo que dice medir.
+
+| Caso | Defecto inyectado | RC exigido | Causa exigida |
+|---|---|---|---|
+| A | un byte invertido (tamaño conservado) en una pieza del manifiesto | 1 | `FAILED` |
+| B | el manifiesto con **0 bytes** | 2 | `MANIFIESTO` |
+| C | `PATH` restringido **sin `shasum`** | 2 | `shasum ausente` |
+| D | el medidor de telemetría retirado | 2 | `falta instrumentos/telemetria_minima.py` |
+| E | un ancla caducada, con el manifiesto **regenerado** para que el único defecto sea el ancla | 1 | `ya no dice` |
+| F | un sandbox que **no es repo git**: la custodia no se puede auditar | 0 | `PARCIAL` |
+| G | `PATH` sin `gitleaks`, con anfitrión git presente | 2 | `gitleaks ausente` |
+
+**Los dos defectos que el banco encontró en el verificador (medidos, no supuestos).**
+
+1. **Un manifiesto de 0 entradas devolvía `VEREDICTO: VERDE · RC=0`.** El bloque [2] compara `NOK + NMAL`
+   contra el número de líneas del manifiesto: con cero objetos declarados eso es `0 + 0 == 0`, que **se
+   satisface a sí mismo**, así que la rama de fractura nunca entra y el `else` imprime «los 0 archivos
+   declarados coinciden con su hash». Es el mismo cuerpo que el medidor ya tenía escrito (`archivo vacio
+   NO es verde`) **un piso arriba**: allí el objeto era la telemetría; aquí el objeto es el manifiesto.
+   Cierre: `if [ "$NLINEAS" -eq 0 ]` → `CONTRATO ROTO` + `RC=2` (caso B).
+2. **Con `no_medido=1` el veredicto salía como `VERDE` a secas.** El encabezado del propio verificador
+   promete lo contrario (*«Sin repo git anfitrión, la custodia NO se declara verde: se declara NO MEDIDA»*),
+   y esa promesa se cumplía **bloque por bloque** y se perdía **en el resumen**. Cierre: el adjetivo solo
+   no se emite; con `RC=0` y `NOMED > 0` sale `VEREDICTO: VERDE PARCIAL · RC=0` y se dice cuál bloque no
+   se midió (caso F). El `RC` ya era correcto: **lo que mentía era la palabra**.
+
+**Los dos defectos del banco mismo** (el metro del metro; se registran porque los cazó el **conteo**, no la
+lectura): (i) la extracción del ancla del caso E usaba un `sed` anclado que arrancaba en el **delimitador de
+cierre**, así que el ancla salía vacía y el caso pasaba **por otro motivo** — corregido con una lectura
+estructural que imprime el conteo de filas **medido en la corrida** (26 el 2026-10-11T05:34:23Z: cifra
+viva, crece si crece la tabla, no rótulo); (ii) la lista de herramientas del shim se escribió
+**sin `shasum` ni `gitleaks`**, así que el caso C no medía nada (faltaban por omisión en **todos** los
+shims) y el caso G moría en la rama equivocada; **el `RC` solo habría declarado G verde: lo cazó la
+aserción de causa.** El rótulo del shim imprime el conteo **medido** (18 herramientas menos la que se deja
+fuera = 17), no un número fijo.
+
+**Crudo, con su hora.** Antes de parchear el verificador: `casos=7 · conformes=3 · rojos=4 · casos rojos: B
+E F G`. De esos cuatro, **B y F eran del objeto** (los dos defectos de arriba) y **E y G eran del banco**
+(el metro del metro). Con el banco ya corregido y el verificador todavía sin parchear:
+`casos=7 · conformes=5 · rojos=2 · casos rojos: B F` — exactamente los dos defectos del verificador. Con el
+verificador parcheado: `VEREDICTO BANCO: VERDE (7/7) · RC=0`.
+
+**Dos rótulos, uno corregido y otro no.** El encabezado de `verificar.sh` decía «Hace tres cosas» y
+enumeraba **cuatro** fases (`[1]`…`[4]`): se contaron y se corrigió la palabra. La sospecha simétrica
+—que el «17» del shim fuera un rótulo fijo— **se midió y era falsa** (la lista tiene 18, el shim excluye
+una): no se «corrigió» nada, porque corregir sin medir es el defecto, no la reparación.
+
+## 8. La reproducción: dos crudos se pueden re-correr y uno no (enmienda de 2026-10-11T05:55:16Z)
+
+La diferencia entre los tres crudos que cita §7 no está en la cifra: está en sí el instrumento que la
+produjo sobrevivió para volver a correrla.
+
+**Reproducido (medido otra vez, no citado de memoria).** Árbol: una copia de `bundle/` con el
+verificador **pre-fix** — `eb14ce18e21c6b94 · 270 líneas`, conservado en la foto previa
+`/tmp/foto_previa_paso2_20261011T052913Z/` — y el banco **vivo** (`7f9a2e4a207f1580 · 166 líneas`),
+porque del banco pre-fix no se guardó copia. El banco se invocó desde dentro del bundle copiado:
+
+    sh /tmp/rep_previo/bundle/tests/bench_must_fail.sh > /tmp/banco_previo_repro.txt 2>&1
+
+Crudo con su hora (`T_UTC = 2026-10-11T05:52:13Z`, la del propio encabezado; 33 líneas ·
+sha16 `4f34b53f1a73dc4a`; el código de salida se leyó aparte = 1):
+
+    bundle = /tmp/rep_previo/bundle
+    sha16(verificar.sh)   = eb14ce18e21c6b94
+    sha16(HASHES.sha256)  = 5bd43f2b7a49b632   <- manifiesto PRE-fix de la copia; el del bundle vivo era 3de1aba9d4ab3648 al medir, y cambia al re-sellar este párrafo: el acto de escribirlo mueve su propia cifra
+    RESUMEN BANCO  casos=7 · conformes=5 · rojos=2
+    VEREDICTO BANCO: ROJO (5/7) · casos rojos: B F
+
+Coincide con lo que §7 ya citaba: la reproducción **no añade un caso, confirma uno**. Y los dos
+sandboxes que el banco conservó dicen la causa **desde adentro**, sin pasar por el rótulo del banco:
+caso **B** → `entradas del manifiesto = 0 · OK = 0 · FAILED = 0` con `VEREDICTO: VERDE · RC=0` (el
+verde falso del manifiesto vacío); caso **F** → `entradas = 25 · OK = 25 · FAILED = 0` con
+`VEREDICTO: VERDE · RC=0` **sin la palabra `PARCIAL`** (el defecto que sólo mentía en la palabra). Los
+dos defectos quedan medidos por tres vías: el verificador, el banco, y el crudo que el banco conservó.
+
+**No reproducible, y se declara.** El primer crudo (`casos=7 · conformes=3 · rojos=4 · casos rojos:
+B E F G`) no se puede volver a correr: el banco defectuoso **no se conservó** (búsqueda de copias = 0)
+⇒ de ese crudo quedan los rótulos, no el instrumento. Regla que fija el caso: **se copia el instrumento
+defectuoso antes de corregirlo**, o la cifra que lo delata deja de ser verificable y pasa a ser
+testimonio. Es la foto previa aplicada **al metro**, no al objeto.
+
+**Trampa pagada en el acto: el universo del banco es su propia ubicación.** El banco no recibe la raíz
+del bundle: la **deriva** de donde vive (su raíz es el directorio padre del directorio del script). Una
+copia del banco puesta **al lado** de `bundle/` en lugar de dentro hace que el universo sea el
+directorio contenedor: ese crudo dice `bundle = /tmp/rep_previo` (faltaba el `/bundle`), imprime
+`shasum: /tmp/rep_previo/verificar.sh: No such file or directory` y los siete casos mueren con
+`RC=127` ⇒ **7/7 ROJO**. El banco no miente —enrojece fuerte cuando está mal alojado— pero ese rojo es
+**del metro, no del objeto**: midió su propia casa. Disposición correcta: `tests/` **dentro** del
+bundle copiado.
+
+**Forma del crudo, medida.** La causa por caso no usa ` - ` como separador: la línea es
+`  B   entradas del manifiesto en el sandbox = 0 bytes` (tres espacios) y la siguiente
+`  B   RC=0  esperado=2  causa [MANIFIESTO] -> ROJO`. Un patrón de lectura con ` - ` imprime **cero
+líneas** sobre un crudo que sí las tiene: el cero era del patrón.
+
+**Un cero que era del metro, otra vez.** El conteo de sandboxes conservados se hizo primero con
+`find /tmp -maxdepth 1 …` y dio **0** con sandboxes vivos en disco (`/tmp` es symlink: el `find` de
+macOS no sigue el punto de partida). Con `ls -d` y con `find /private/tmp` aparecen los **7** (los 2 de
+esta corrida y los 5 de la corrida mal alojada). Se declara con su motor: el cero no era del objeto.
+Los siete se borraron después de atribuir los dos de esta corrida; el árbol `/tmp/rep_previo` se borra
+cuando este párrafo esté dentro del manifiesto.
+
+---
+
+## 9. La Pestaña 2 entra al bundle: ocho piezas, copiadas y declaradas
+
+**Qué se incorporó y por qué.** La pestaña 2 (ΣΦ circular corregida) produjo cinco instrumentos y una
+medida, más tres actas que las auditan. Un bundle que sólo declara su aparato de custodia y no el
+aparato que produjo la cifra que el paper cita deja fuera justamente lo que el paper afirma. Las ocho
+piezas entraron por **copia** (`cp -p`) a este bundle, y su sha256 se comprobó **idéntico** al del
+original en `sim/`: **8/8**, `cmp` sin divergencia. El bundle no es un puntero al objeto vivo: es una
+copia congelada, y la copia se declara (§6.2 ya lo fijó para los medidores heredados).
+
+| Pieza en el bundle | sha16 | tamaño | Original en sim/ |
+|---|---|---|---|
+| `evidencia/medidas_aN_circular_corregida_20261011.csv` | `c9aaa89b7d56ead7` | 82 l · 3366 B | `sim/data/medidas_aN_circular_corregida_20261011.csv` |
+| `evidencia/control_pareado_convergente.json` | `41fce209adc05f98` | 1288 l · 27892 B | `sim/data/invariantes/control_pareado_convergente.json` |
+| `instrumentos/medidores/fuego_pestana2_20261011.py` | `f09e781a65d3abe6` | 410 l · 20051 B | `sim/fuego_pestana2_20261011.py` |
+| `instrumentos/medidores/control_pareado_convergente.py` | `2829d1e1ce1ee7e4` | 569 l · 29405 B | `sim/control_pareado_convergente.py` |
+| `instrumentos/medidores/lector_invariantes.py` | `9fab4e04d281d3cc` | 635 l · 32113 B | `sim/lector_invariantes.py` |
+| `actas/ACTA_DEL_PARCHE_SALIDA_FASES_20261011.md` | `89e71eb5a011ae4f` | 91 l · 6111 B | `sim/ACTA_DEL_PARCHE_SALIDA_FASES_20261011.md` |
+| `actas/ACTA_DEL_DISPARO_PESTANA2_CIRCULAR_CORREGIDA_20261011.md` | `74f1213640b01724` | 149 l · 11357 B | `sim/ACTA_DEL_DISPARO_PESTANA2_CIRCULAR_CORREGIDA_20261011.md` |
+| `actas/VEREDICTO_CONTROL_PAREADO_20261011.md` | `a6316f8db84d8885` | 254 l · 15118 B | `sim/data/invariantes/VEREDICTO_CONTROL_PAREADO_20261011.md` |
+
+**Las anclas nuevas (12).** `verificar.sh` creció de 26 a **38** anclas: las 12 de esta tabla apuntan a
+una línea **viva** de cada pieza nueva, y su token se midió con el **mismo motor** que usa el bloque [4]
+—`sed -n "${lin}p" | grep -qF`— antes de escribirlas: `ok=12 rojas=0` a `2026-10-11T06:02:16Z`.
+Cada ancla se anexó **al final** de `FIN_ANCLAS`, nunca en medio: el banco must-fail lee la **primera**
+fila de la tabla (caso E) y reordenarla habría movido el objeto que ese caso mide.
+
+```
+evidencia/medidas_aN_circular_corregida_20261011.csv|3|f280fb6744917e9a
+evidencia/medidas_aN_circular_corregida_20261011.csv|78|178.7588150970
+evidencia/control_pareado_convergente.json|2|2026-10-11T05:48:12Z
+instrumentos/medidores/fuego_pestana2_20261011.py|123|RE_N = re.compile
+instrumentos/medidores/fuego_pestana2_20261011.py|5|f280fb6744917e9a
+instrumentos/medidores/control_pareado_convergente.py|99|rama 2 (~0.74)
+instrumentos/medidores/control_pareado_convergente.py|555|intacto: %s
+instrumentos/medidores/lector_invariantes.py|42|0.078459
+actas/ACTA_DEL_PARCHE_SALIDA_FASES_20261011.md|48|RC_PARCHE=2
+actas/ACTA_DEL_DISPARO_PESTANA2_CIRCULAR_CORREGIDA_20261011.md|143|c9aaa89b7d56ead7
+actas/VEREDICTO_CONTROL_PAREADO_20261011.md|19|rama 2
+actas/VEREDICTO_CONTROL_PAREADO_20261011.md|68|28.2505
+```
+
+**Una ancla que se movió por escribir.** El ancla auto-referente `verificar.sh|103|MANIFIESTO declara 0
+objetos` caducó en el acto de la enmienda: el encabezado nuevo (identidad del motor, universo 34/33)
+empujó esa línea de la **103** a la **129**. Se re-midió y se re-escribió; queda como caso de la regla
+que este índice ya trae escrita — *el acto de escribir mueve la cifra que el escrito postula*. Un ancla
+auto-referente es el instrumento midiéndose a sí mismo: se corrige **contando la línea**, no leyendo el
+párrafo.
+
+**El contrato de cabecera también entró.** Los tres veredictos de `verificar.sh` ya no dicen `RC=0` a
+secas: emiten `RC: 0 · MOTOR: <M0|M1|M?> · SHA16: <sha16 del manifiesto> · T_UTC: <sello>`. El cambio es
+seguro para el banco **medido, no supuesto**: `arbitra()` sólo busca la **cadena de causa** de cada caso
+(`FAILED`, `MANIFIESTO`, `shasum ausente`, `falta`, `ya no dice`, `PARCIAL`, `gitleaks ausente`) y nunca
+la forma del veredicto. Los cinco RC=2 tempranos siguen imprimiendo `RC=2` y saliendo sin encabezado de
+contrato: allí el metro que calcula el SHA16 es justamente el que falta.
+
+**Límite declarado, no ensanchado en silencio.** Queda **fuera** del bundle
+`sim/data/invariantes/crudo_lector_invariantes.json` (sha16 `96f66e9cb30a56ed`, el crudo del lector de
+invariantes). Las actas `LECTURA_ETAPA2_20261011.md` e `INFORME_LECTOR_INVARIANTES_20261011.md`, que sí
+están dentro, lo **citan**: el testigo de esa lectura vive fuera de la caja que lo cita. Se declara como
+frontera abierta en vez de copiarlo por conveniencia; si entra, entra con su fila y su ancla como las
+otras ocho.
+
+**Y una novena pieza, escrita después de las ocho.**
+`actas/ACTA_DEL_PASO_1_Y_PASO_2_20261011.md` · 112 l · 7887 B · sha16 `97c13bcb87ac4312` · es el cierre
+documental del Paso 1 y la medición del Paso 2 en M0: `VEREDICTO: VERDE · RC: 0 · MOTOR: M0 · SHA16:
+3866dbd1b785ea15` a `2026-10-11T06:08:38Z`, con el banco externo en **7/7** a `06:08:51Z` (crudos en
+`/tmp/verif_paso2_M0_0607Z.txt` · sha16 `5664ee0894677da6` y `/tmp/banco_0609Z.txt` · sha16
+`a58afb530d31ddeb`). Su **§5** declara —sin adjudicarlo— que el objeto **se movió mientras se medía**: otra
+mano añadió el bloque `[2b] COMPLETITUD (fail-closed)` a `verificar.sh` (`330 → 387 l`, mtime
+`06:10:02Z`), y la corrida que vale es la posterior, sobre el objeto ya quieto. Entra **la última**, y por
+eso el `SHA16` que ella misma cita es el del manifiesto **anterior** a su propia fila: el valor
+autoritativo es el que imprime `./verificar.sh`, que lo declara «no circular». Ninguna medición del cierre
+se guarda aquí dentro — el acta **cita** su hora, y `/tmp` no es archivo.

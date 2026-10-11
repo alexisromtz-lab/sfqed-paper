@@ -4,7 +4,7 @@
 #
 #   ./verificar.sh
 #
-# Hace tres cosas y devuelve un código de salida que no admite interpretación:
+# Hace cuatro fases y devuelve un código de salida que no admite interpretación:
 #
 #   [1] selftest del instrumento de telemetría  -> si el medidor está roto: RC=2 y SE PARA.
 #   [2] integridad de HASHES.sha256             -> si un archivo no cuadra: fractura (RC=1).
@@ -21,7 +21,19 @@
 #   - verificar.sh SÍ está declarado en el manifiesto: un manifiesto que no cubre a su
 #     verificador deja al verificador sin testigo.
 #   - El bundle no es el árbol sim/ completo: es el aparato de medida.
-#   - Sin repo git anfitrión, la custodia NO se declara verde: se declara NO MEDIDA.
+#   - Sin repo git anfitrión, la custodia NO se declara verde: se declara NO MEDIDA,
+#     y el veredicto global viaja como VERDE PARCIAL. El adjetivo solo no se emite.
+#   - Un manifiesto de 0 entradas NO es todo-conforme: es contrato roto (RC=2).
+#     Cero objetos declarados se satisface a si mismo (0 + 0 == 0): falso verde.
+#   - El banco must-fail (tests/bench_must_fail.sh) se corre APARTE: este verificador
+#     no se valida a si mismo. Aqui solo se verifica su hash, como el de cualquier pieza.
+#     (el bloque [3] imprime NO MEDIDO por cada pieza que no se pudo auditar.)
+#   - Las 8 piezas de evidencia de la Pestana 2 entraron al bundle por COPIA (cp), y su
+#     sha256 se comprobo identico al del original en sim/: este bundle no es un puntero al
+#     objeto vivo, es una copia congelada. Copiar no es citar: la copia se declara.
+#   - El encabezado del contrato (MOTOR / SHA16 / T_UTC) NO se emite en los RC=2 de
+#     contrato roto: alli el motor que produce el SHA16 puede faltar (caso C del banco:
+#     PATH sin shasum) y un contrato que no se puede medir no se imprime.
 # ==============================================================================
 
 set -u
@@ -29,6 +41,22 @@ set -u
 cd "$(dirname "$0")" || { echo "CONTRATO ROTO: no se pudo entrar al directorio del bundle"; exit 2; }
 
 T0=$(TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+# --- identidad del motor: el nucleo se MIDE en ruta absoluta, no se adivina del PATH ----
+# El banco must-fail corre este script con un PATH falso que NO trae uname: si aqui se
+# llamara a "uname" a secas, el banco mediria su propio PATH y no el nucleo.
+MKERN=""
+if [ -x /usr/bin/uname ]; then MKERN=$(/usr/bin/uname -s 2>/dev/null); fi
+case "$MKERN" in
+  Darwin) MOTOR_ID="M0" ;;
+  Linux)  MOTOR_ID="M1" ;;
+  *)      MOTOR_ID="M?" ;;
+esac
+if [ -n "$MKERN" ]; then
+  MOTOR_DECL="$MKERN $(/usr/bin/uname -r 2>/dev/null)"
+else
+  MOTOR_DECL="nucleo no medido: /usr/bin/uname ausente"
+fi
 
 sha16() { shasum -a 256 "$1" | cut -c1-16; }
 
@@ -43,13 +71,19 @@ AN_MAL=0
 echo "=============================================================="
 echo "SFQED · bundle · verificacion en un comando"
 echo "T_UTC = $T0"
-echo "UNIVERSO DECLARADO: bundle/ = 25 archivos = 24 declarados en HASHES.sha256 + el propio manifiesto"
+echo "UNIVERSO DECLARADO: bundle/ = 35 archivos = 34 declarados en HASHES.sha256 + el propio manifiesto"
+echo "BANCO MUST-FAIL: tests/bench_must_fail.sh (7 casos). NO se invoca desde aqui:"
+echo "  un verificador no se valida a si mismo; el banco lo mide desde afuera."
 echo "MOTOR: shasum -a 256 | cmp | grep -F | python3 -B | git -C"
-echo "UNIDAD: archivo (inventario) | linea (anclas) | byte (custodia)"
+echo "MOTOR_ID: M0 = Darwin/anfitrion · M1 = GNU/Linux (nix develop .#gnu) · M? = nucleo no medido"
+echo "  aqui: $MOTOR_ID ($MOTOR_DECL)"
+echo "UNIDAD: archivo (inventario y cobertura) | linea (anclas) | byte (custodia)"
 echo "VENTANA: el T_UTC de este encabezado. Toda cifra de conteo caduca al escribirse."
 if [ -f HASHES.sha256 ]; then
-  echo "sha16(HASHES.sha256) = $(sha16 HASHES.sha256)   <- no circular: lo imprime el verificador"
+  SHMAN=$(sha16 HASHES.sha256)
+  echo "sha16(HASHES.sha256) = $SHMAN   <- no circular: lo imprime el verificador"
 else
+  SHMAN="(AUSENTE)"
   echo "sha16(HASHES.sha256) = (AUSENTE)"
 fi
 echo "sha16(verificar.sh)  = $(sha16 verificar.sh)"
@@ -91,6 +125,12 @@ NOK=$(printf '%s\n' "$SAL2" | grep -c ': OK$')
 NMAL=$(printf '%s\n' "$SAL2" | grep -c 'FAILED')
 printf '%s\n' "$SAL2" | grep 'FAILED' | sed 's/^/    /'
 echo "    entradas en el manifiesto = $NLINEAS · OK = $NOK · FAILED = $NMAL"
+if [ "$NLINEAS" -eq 0 ]; then
+  echo "    CONTRATO ROTO: el MANIFIESTO declara 0 objetos. Cero medidas no pueden diferir,"
+  echo "      y la aritmetica se satisface a si misma (0 + 0 == 0): ese verde es falso."
+  echo "      Sin objetos declarados no hay integridad que medir: fallo del metro."
+  echo "RC=2"; exit 2
+fi
 if [ "$((NOK + NMAL))" -ne "$NLINEAS" ]; then
   echo "    FRACTURA: el motor no evaluo todas las lineas (evaluadas=$((NOK + NMAL)) < $NLINEAS)"
   RC=1
@@ -101,6 +141,63 @@ elif [ "$NMAL" -gt 0 ]; then
   ROJO=$((ROJO + 1))
 else
   echo "    OK: los $NOK archivos declarados coinciden con su hash"
+  VERDE=$((VERDE + 1))
+fi
+
+# ------------------------------------------------ [2b] COMPLETITUD (fail-closed)
+# Orden del dueno: si hay UN archivo en el bundle que el manifiesto no declara,
+# el retorno es RC=1. Las dos mitades no son el mismo metro y ninguna basta sola:
+#   [2]  shasum -c  mide IDENTIDAD: lo declarado es lo que dice ser. Es CIEGO a
+#        los archivos que no estan en la lista (no los ve, no los puede ver).
+#   [2b] el conteo  mide COBERTURA: todo lo que hay esta declarado. Es CIEGO a
+#        las sustituciones: un byte cambiado no mueve el conteo.
+# Medido antes de escribir este bloque: 34 archivos reales contra 25 declarados
+# => 8 huerfanos viajando verdes. [2] sin [2b] deja pasar huerfanos; [2b] sin [2]
+# deja pasar un archivo declarado y sustituido. Van los dos.
+# MOTOR del conteo: python3 -B (ya declarado en la linea MOTOR y garantizado por
+# [1], que sale RC=2 si falta). NO find: find no esta declarado arriba, y un
+# medidor que aparece sin declarar es el mismo defecto que un archivo sin declarar.
+# No se excluye nada: ni .DS_Store ni __pycache__. Un archivo no declarado es un
+# archivo no declarado, venga de donde venga; se borra o se declara. El dia que el
+# Finder cree un .DS_Store, este gate lo dira en rojo: eso es correcto.
+# Quien escriba dentro del bundle despues de esta corrida regenera HASHES.sha256,
+# o el bundle queda en RC=1: el sello es del ultimo que escribe, no del primero.
+SAL2B=$(python3 -B - <<'FIN_COBERTURA'
+import os
+raiz = "."
+declaradas = set()
+with open("HASHES.sha256", encoding="utf-8") as f:
+    for l in f:
+        l = l.strip()
+        if l:
+            declaradas.add(l.split(None, 1)[1].lstrip("*").strip())
+reales = set()
+for d, sub, ficheros in os.walk(raiz):
+    for f in ficheros:
+        reales.add(os.path.relpath(os.path.join(d, f), raiz))
+huerfanos = sorted(reales - declaradas - {"HASHES.sha256"})
+print("CONTEO reales=%d declaradas=%d huerfanos=%d" % (len(reales), len(declaradas), len(huerfanos)))
+for h in huerfanos:
+    print("    HUERFANO sin entrada en el manifiesto: %s" % h)
+FIN_COBERTURA
+)
+NREAL=$(printf '%s\n' "$SAL2B" | grep -F 'CONTEO reales=' | head -1 | cut -d= -f2 | cut -d' ' -f1)
+NHUER=$(printf '%s\n' "$SAL2B" | grep -F 'CONTEO reales=' | head -1 | cut -d= -f4)
+case "$NREAL$NHUER" in
+  ''|*[!0-9]*)
+    echo "    CONTRATO ROTO: el contador de completitud no imprimio un numero usable."
+    echo "      Un conteo vacio no es un conteo: no se sigue midiendo con un metro ilegible."
+    echo "RC=2"; exit 2 ;;
+esac
+printf '%s\n' "$SAL2B" | sed 's/^/    /'
+echo "    cobertura: reales=$NREAL · declarados=$NLINEAS · reales - 1 (el propio manifiesto) = $((NREAL - 1))"
+if [ "$NREAL" -ne "$((NLINEAS + 1))" ]; then
+  echo "    FRACTURA DE COMPLETITUD: $NHUER archivo(s) del bundle no tienen entrada en el manifiesto."
+  echo "      Un archivo sin entrada viaja sin testigo: el sello declara identidad, no cobertura."
+  RC=1
+  ROJO=$((ROJO + 1))
+else
+  echo "    OK: cobertura completa ($NREAL = $NLINEAS declarados + el propio manifiesto)"
   VERDE=$((VERDE + 1))
 fi
 
@@ -255,6 +352,23 @@ preregistros/PREREGISTRO_KERR_20261011.md|21|piso de maquina
 instrumentos/medidores/falsador.py|125|sin N=1 no se puede medir el cociente
 instrumentos/medidores/maxwell2d.py|352|I_SL + 40
 instrumentos/telemetria_minima.py|341|archivo vacio NO es verde
+verificar.sh|129|MANIFIESTO declara 0 objetos
+tests/bench_must_fail.sh|112|B - 2 "MANIFIESTO"
+tests/bench_must_fail.sh|118|shasum ausente
+tests/bench_must_fail.sh|148|F - 0 "PARCIAL"
+tests/bench_must_fail.sh|155|gitleaks ausente
+evidencia/medidas_aN_circular_corregida_20261011.csv|3|f280fb6744917e9a
+evidencia/medidas_aN_circular_corregida_20261011.csv|78|178.7588150970
+evidencia/control_pareado_convergente.json|2|2026-10-11T05:48:12Z
+instrumentos/medidores/fuego_pestana2_20261011.py|123|RE_N = re.compile
+instrumentos/medidores/fuego_pestana2_20261011.py|5|f280fb6744917e9a
+instrumentos/medidores/control_pareado_convergente.py|99|rama 2 (~0.74)
+instrumentos/medidores/control_pareado_convergente.py|555|intacto: %s
+instrumentos/medidores/lector_invariantes.py|42|0.078459
+actas/ACTA_DEL_PARCHE_SALIDA_FASES_20261011.md|48|RC_PARCHE=2
+actas/ACTA_DEL_DISPARO_PESTANA2_CIRCULAR_CORREGIDA_20261011.md|143|c9aaa89b7d56ead7
+actas/VEREDICTO_CONTROL_PAREADO_20261011.md|19|rama 2
+actas/VEREDICTO_CONTROL_PAREADO_20261011.md|68|28.2505
 FIN_ANCLAS
 
 # --------------------------------------------------------------- [5] RESUMEN
@@ -262,9 +376,12 @@ T1=$(TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
 echo "=============================================================="
 echo "RESUMEN  verde=$VERDE · rojo=$ROJO · no_medido=$NOMED · anclas=$AN_TOT ok=$AN_OK rojo=$AN_MAL"
 echo "T_UTC inicio=$T0 fin=$T1"
-if [ "$RC" -eq 0 ]; then
-  echo "VEREDICTO: VERDE · RC=0"
+if [ "$RC" -eq 0 ] && [ "$NOMED" -eq 0 ]; then
+  echo "VEREDICTO: VERDE · RC: 0 · MOTOR: $MOTOR_ID · SHA16: $SHMAN · T_UTC: $T1"
+elif [ "$RC" -eq 0 ]; then
+  echo "VEREDICTO: VERDE PARCIAL · RC: 0 · MOTOR: $MOTOR_ID · SHA16: $SHMAN · T_UTC: $T1 · $NOMED bloque(s) NO MEDIDO(s):" 
+  echo "  lo que no se midio no se declara verde. Verde de lo medido, y se dice cual."
 else
-  echo "VEREDICTO: FRACTURA del objeto · RC=$RC"
+  echo "VEREDICTO: FRACTURA del objeto · RC: $RC · MOTOR: $MOTOR_ID · SHA16: $SHMAN · T_UTC: $T1"
 fi
 exit $RC
