@@ -1,0 +1,168 @@
+{
+  "instrumento": "sim/schwinger_offline.py",
+  "etapa": 2,
+  "T_UTC": "2026-10-11T00:19:30Z",
+  "UNIVERSO DECLARADO": "main.tex (cuerpos leidos; sha16 impreso) + sim/configs.json (campo pico por N) + mallas y tolerancias ELEGIDAS; motor python3 float64 sin dependencias; medida = UNA celda del reticulo (lambda/2 x T/2), la MISMA en las dos geometrias; volumen y tiempo del rendimiento: V = (pi w0^2/2)(c tau), T = tau  [SUPUESTO DECLARADO]",
+  "main_tex_sha16": "4299786a34bdb313",
+  "pin_formulas": {
+    "eq:schwinger_rate": "b043587212f4522b",
+    "eq:ab": "7a20202407815345",
+    "eq:yield": "b27213b3542beb39",
+    "eq:lin_inv": "ade47f905f9ac06e",
+    "eq:cp_inv": "46e99b22931bb5a1"
+  },
+  "numerica_declarada": {
+    "N_TERMINOS": 64,
+    "CORTE_DEX": 40.0,
+    "N_Z_CIRC": [
+      4001,
+      8001
+    ],
+    "N_GRID_LIN": [
+      400,
+      800
+    ],
+    "U_ESQUINA_rad": 1.0,
+    "TOL_CONV_DEX": 0.001,
+    "TOL_CONTROL_DEX": 1e-09,
+    "V_m3": 2.4110740061553317e-17,
+    "T_s": 2e-14,
+    "log10_VT_m3s": -30.316759463402107
+  },
+  "underflow": {
+    "x": 1933.4510480722524,
+    "exp_menos_pi_x_doble": 0.0,
+    "log10_w_dex": -2588.4913124178106,
+    "nota": "el 0.0 de exp(-pi x) es el piso de doble, no un cero fisico: log10 w es finito y es la cifra que se reporta"
+  },
+  "controles": [
+    {
+      "nombre": "CP1 dos rutas SI (A: hbar^2 c | B: eV^4 -> q^4/(hbar^4 c^3))",
+      "ok": true,
+      "detalle": "|dA-dB| = 0.000e+00 dex"
+    },
+    {
+      "nombre": "CP2 Lemma 1: onda plana -> a = 0 exacto",
+      "ok": true,
+      "detalle": "a = 0.0 -> 'NO HAY PARES' (no 0.0 pares)"
+    },
+    {
+      "nombre": "CP3 las dos geometrias NO son la misma: la lineal cambia con t",
+      "ok": true,
+      "detalle": "a_circ(z=0) = 6.844163e+14 V/m fijo en t (eq:cp_inv); cambio medido en la LINEAL = 6.844e+14 V/m en z = 0.000 lambda"
+    },
+    {
+      "nombre": "CP4 cola de la serie de Schwinger despreciable",
+      "ok": true,
+      "detalle": "log10 cola(n>1) <= -5275.7"
+    },
+    {
+      "nombre": "CP5 escala entre rutas constante en E y en E/1000",
+      "ok": true,
+      "detalle": "d(E) = 0.000e+00 dex ; d(E/1000) = 0.000e+00 dex"
+    },
+    {
+      "nombre": "CP6 convergencia de las rejillas (z y u,v)",
+      "ok": true,
+      "detalle": "peor divergencia = 2.274e-13 dex"
+    }
+  ],
+  "todo_verde": true,
+  "tabla": [
+    {
+      "N": 1,
+      "E_pico_V_m": 684416332271534.8,
+      "a_tot_pred_adimensional": 170.53380233310853,
+      "x_Ecr_sobre_Epico": 1933.4510480722524,
+      "log10_w_pico": -2588.4913124178106,
+      "log10_cola_serie": -5275.693634106007,
+      "log10_media_circular": -2590.481230024494,
+      "log10_media_lineal": -2592.471201210022,
+      "log10_N_circular": -2620.797989487896,
+      "log10_N_lineal": -2622.787960673424,
+      "ventaja_circular_dex": 1.9899711855282476,
+      "convergencia_z_dex": 0.0,
+      "convergencia_uv_dex": 0.0,
+      "cota_resto_celda_dex": -363.510163139068,
+      "celdas_uv_en_cero": 0,
+      "colas_dobles": 205561,
+      "pares_dobles_circular": 0.0
+    },
+    {
+      "N": 2,
+      "E_pico_V_m": 967910859408055.2,
+      "a_tot_pred_adimensional": 241.17121610253466,
+      "x_Ecr_sobre_Epico": 1367.156347184127,
+      "log10_w_pico": -1815.5511832244504,
+      "log10_cola_serie": -3730.415435710615,
+      "log10_media_circular": -1817.4658914133017,
+      "log10_media_lineal": -1819.380675347433,
+      "log10_N_circular": -1847.7826508767039,
+      "log10_N_lineal": -1849.6974348108351,
+      "ventaja_circular_dex": 1.9147839341312647,
+      "convergencia_z_dex": 2.2737367544323206e-13,
+      "convergencia_uv_dex": 0.0,
+      "cota_resto_celda_dex": -255.8820974567086,
+      "celdas_uv_en_cero": 0,
+      "colas_dobles": 86172,
+      "pares_dobles_circular": 0.0
+    },
+    {
+      "N": 4,
+      "E_pico_V_m": 1368832664543069.5,
+      "a_tot_pred_adimensional": 341.06760466621705,
+      "x_Ecr_sobre_Epico": 966.7255240361262,
+      "log10_w_pico": -1268.9118067762295,
+      "log10_cola_serie": -2637.7387428055013,
+      "log10_media_circular": -1270.751325436875,
+      "log10_media_lineal": -1272.5909511642787,
+      "log10_N_circular": -1301.0680849002772,
+      "log10_N_lineal": -1302.907710627681,
+      "ventaja_circular_dex": 1.8396257274036998,
+      "convergencia_z_dex": 2.2737367544323206e-13,
+      "convergencia_uv_dex": 0.0,
+      "cota_resto_celda_dex": -179.821563596975,
+      "celdas_uv_en_cero": 0,
+      "colas_dobles": 23905,
+      "pares_dobles_circular": 0.0
+    },
+    {
+      "N": 8,
+      "E_pico_V_m": 1935821718816110.5,
+      "a_tot_pred_adimensional": 482.3424322050693,
+      "x_Ecr_sobre_Epico": 683.5781735920635,
+      "log10_w_pico": -882.2912271817174,
+      "log10_cola_serie": -1865.0996436078053,
+      "log10_media_circular": -884.0555844161844,
+      "log10_media_lineal": -885.820092959587,
+      "log10_N_circular": -914.3723438795865,
+      "log10_N_lineal": -916.1368524229891,
+      "ventaja_circular_dex": 1.7645085434025987,
+      "convergencia_z_dex": 1.1368683772161603e-13,
+      "convergencia_uv_dex": 0.0,
+      "cota_resto_celda_dex": -126.08261103136044,
+      "celdas_uv_en_cero": 0,
+      "colas_dobles": 378,
+      "pares_dobles_circular": 0.0
+    },
+    {
+      "N": 16,
+      "E_pico_V_m": 2737665329086139.0,
+      "a_tot_pred_adimensional": 682.1352093324341,
+      "x_Ecr_sobre_Epico": 483.3627620180631,
+      "log10_w_pico": -608.8210239597751,
+      "log10_cola_serie": -1318.7612971552485,
+      "log10_media_circular": -610.5102594581487,
+      "log10_media_lineal": -612.1997087274748,
+      "log10_N_circular": -640.8270189215508,
+      "log10_N_lineal": -642.5164681908769,
+      "ventaja_circular_dex": 1.6894492693261327,
+      "convergencia_z_dex": 0.0,
+      "convergencia_uv_dex": 1.1368683772161603e-13,
+      "cota_resto_celda_dex": -88.12735124419669,
+      "celdas_uv_en_cero": 0,
+      "colas_dobles": 0,
+      "pares_dobles_circular": 0.0
+    }
+  ]
+}
