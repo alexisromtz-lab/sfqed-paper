@@ -20,11 +20,21 @@
 #   - HASHES.sha256 no puede declararse a sí mismo: su sha16 se imprime aquí, en corrida.
 #   - verificar.sh SÍ está declarado en el manifiesto: un manifiesto que no cubre a su
 #     verificador deja al verificador sin testigo.
+#   - HASHES.sha256 es un artefacto EMITIDO POR MAQUINA: una entrada por linea, sin
+#     comentarios, sin lineas en blanco y sin finales redundantes. [2] cuenta LINEAS
+#     (wc -l) y [2b] descarta vacias: si el formato se rompe, las dos cifras dejan
+#     de ser el mismo objeto. El gate que mide esa paridad es el chequeo
+#     NOK + NMAL != NLINEAS de [2]; aqui solo se declara, no se repara.
 #   - El bundle no es el árbol sim/ completo: es el aparato de medida.
 #   - Sin repo git anfitrión, la custodia NO se declara verde: se declara NO MEDIDA,
 #     y el veredicto global viaja como VERDE PARCIAL. El adjetivo solo no se emite.
-#   - Un manifiesto de 0 entradas NO es todo-conforme: es contrato roto (RC=2).
-#     Cero objetos declarados se satisface a si mismo (0 + 0 == 0): falso verde.
+#   - PISO DEL MANIFIESTO: por debajo de 25 entradas declaradas el manifiesto es
+#     contrato roto (RC=2), y el caso 0 se satisface a si mismo (0 + 0 == 0): ese
+#     verde es falso. El 25 es un PISO DECLARADO (elegido), no una cota derivada de
+#     un conteo: la foto del defecto historico (34 archivos reales contra 25
+#     declarados = 9 huerfanos viajando verdes) es el caso que lo motiva, no el
+#     numero que lo mide. Ese caso de hoy NO lo atrapa el piso (25 no es < 25): lo
+#     atrapa [2b], que mide COBERTURA. Piso y cobertura no son el mismo metro.
 #   - El banco must-fail (tests/bench_must_fail.sh) se corre APARTE: este verificador
 #     no se valida a si mismo. Aqui solo se verifica su hash, como el de cualquier pieza.
 #     (el bloque [3] imprime NO MEDIDO por cada pieza que no se pudo auditar.)
@@ -71,7 +81,7 @@ AN_MAL=0
 echo "=============================================================="
 echo "SFQED · bundle · verificacion en un comando"
 echo "T_UTC = $T0"
-echo "UNIVERSO DECLARADO: bundle/ = 35 archivos = 34 declarados en HASHES.sha256 + el propio manifiesto"
+echo "UNIVERSO DECLARADO: todo archivo bajo bundle/, incluidos este verificador y HASHES.sha256"
 echo "BANCO MUST-FAIL: tests/bench_must_fail.sh (7 casos). NO se invoca desde aqui:"
 echo "  un verificador no se valida a si mismo; el banco lo mide desde afuera."
 echo "MOTOR: shasum -a 256 | cmp | grep -F | python3 -B | git -C"
@@ -125,10 +135,11 @@ NOK=$(printf '%s\n' "$SAL2" | grep -c ': OK$')
 NMAL=$(printf '%s\n' "$SAL2" | grep -c 'FAILED')
 printf '%s\n' "$SAL2" | grep 'FAILED' | sed 's/^/    /'
 echo "    entradas en el manifiesto = $NLINEAS · OK = $NOK · FAILED = $NMAL"
-if [ "$NLINEAS" -eq 0 ]; then
-  echo "    CONTRATO ROTO: el MANIFIESTO declara 0 objetos. Cero medidas no pueden diferir,"
-  echo "      y la aritmetica se satisface a si misma (0 + 0 == 0): ese verde es falso."
-  echo "      Sin objetos declarados no hay integridad que medir: fallo del metro."
+if [ "$NLINEAS" -lt 25 ]; then
+  echo "    CONTRATO ROTO: el MANIFIESTO declara $NLINEAS entradas, por debajo del piso"
+  echo "      declarado (25). Un manifiesto degenerado se satisface a si mismo si esta"
+  echo "      vacio (0 + 0 == 0): ese verde seria falso. El piso es DECLARADO, no derivado;"
+  echo "      la cobertura (todo lo que HAY esta declarado) la mide [2b], no este bloque."
   echo "RC=2"; exit 2
 fi
 if [ "$((NOK + NMAL))" -ne "$NLINEAS" ]; then
@@ -352,7 +363,7 @@ preregistros/PREREGISTRO_KERR_20261011.md|21|piso de maquina
 instrumentos/medidores/falsador.py|125|sin N=1 no se puede medir el cociente
 instrumentos/medidores/maxwell2d.py|352|I_SL + 40
 instrumentos/telemetria_minima.py|341|archivo vacio NO es verde
-verificar.sh|129|MANIFIESTO declara 0 objetos
+verificar.sh|139|CONTRATO ROTO: el MANIFIESTO declara
 tests/bench_must_fail.sh|112|B - 2 "MANIFIESTO"
 tests/bench_must_fail.sh|118|shasum ausente
 tests/bench_must_fail.sh|148|F - 0 "PARCIAL"
