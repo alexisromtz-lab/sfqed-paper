@@ -236,9 +236,15 @@ $\mathbf{B}=\hat{\mathbf{k}}\times\mathbf{E}$ and
 $|\mathbf{E}|=|\mathbf{B}|$. Hence $\mathcal{G}=\mathbf{E}\cdot\mathbf{B}=0$
 and $\mathcal{F}=\tfrac12(|\mathbf{E}|^2-|\mathbf{B}|^2)=0$ identically, at
 every instant and every phase. By Eq.~\eqref{eq:yield} the yield vanishes:
-$w(a=0)=0$. An arbitrarily intense \emph{single} pulse creates no pairs from
-the vacuum. Pair creation requires the interference of at least two
-non-collinear fields.
+$w(a=0)=0$. For a field transverse to a single propagation direction, an
+arbitrarily intense \emph{single} pulse therefore creates no pairs from the
+vacuum, and pair creation requires at least two fields whose wave vectors are
+not parallel. The null is exact for a plane wave and holds for a paraxial
+beam; it fails at the focus of a tightly focused pulse, where
+$\nabla\cdot\mathbf{E}=0$ forces a longitudinal component
+$E_z\sim E_\perp/(k w_0)$ and the time-averaged invariant acquires a term of
+relative order $(k w_0)^{-2}$. The results below are stated for
+transversality-preserving fields.
 
 \subsection{Two counter-propagating beams (Lemma 2)}
 
@@ -328,10 +334,11 @@ Setting the target field to the critical value, $E_\ast=E_{\mathrm{cr}}$, the
 input energy required to reach the pair-creation threshold falls as $1/N$
 relative to the threshold of a single beam.
 
-This is the analytic core of the geometric route: distributing the same energy
-over more coherently combined beams is not a cosmetic change but a linear-in-$N$
-reduction of the energy required at the threshold. The assumptions are
-explicit and each is falsifiable: (i)~vacuum superposition,
+The algebra here is that of coherent addition and is elementary; what the
+proposition establishes is that the linear-in-$N$ reduction of the threshold
+energy follows from vacuum superposition alone, with no further assumption
+about the interaction. The assumptions are explicit and each is falsifiable:
+(i)~vacuum superposition,
 $F=\sum_i F_i$, valid below the pair-creation threshold; (ii)~perfect phase
 matching, i.e.\ path-length differences $\Delta L\ll\lambda$ across all beams;
 (iii)~a fixed, common focal volume $\Sigma\times\tau$; (iv)~no plasma formation
@@ -415,16 +422,68 @@ OSIRIS, and WarpX~\cite{WarpX2022}. The measurement to perform is the
 $\mathbf{E},\mathbf{B}$ and the yield obtained by integrating
 Eq.~\eqref{eq:yield}, compared against the analytic predictions
 \eqref{eq:lin_inv}--\eqref{eq:cp_inv} for two beams and the scaling
-\eqref{eq:oneoverN} for $N$ beams. The experiment to which these predictions
-speak is LUXE at DESY~\cite{LUXE2021}, whose
-beam--laser and photon--laser configurations are precisely coherent
-superpositions of the kind analysed here.
+\eqref{eq:oneoverN} for $N$ beams. The laboratory context for this regime is
+LUXE at DESY~\cite{LUXE2021}, whose beam--laser and photon--laser
+configurations are coherent superpositions of the same kind --- of two beams,
+not of the optimised $N$-beam geometry --- so that they constrain the
+strong-field framework and the two-beam invariants
+\eqref{eq:lin_inv}--\eqref{eq:cp_inv}, rather than the energy scaling of
+Eq.~\eqref{eq:oneoverN}.
 
 \paragraph{Scope.} This draft deliberately restricts itself to the pure-field
 problem. It does not treat dynamically assisted production, and it makes no
 claim beyond the assumptions stated at Eq.~\eqref{eq:oneoverN}. A claim that
 survives those assumptions is a result; a claim that needs them dropped is a
 computation.
+
+\subsection{Domain of validity and practical constraints}
+
+The bounds collected here are part of the result rather than qualifications
+attached to it: inside them, the scaling of Eq.~\eqref{eq:oneoverN} is what
+this paper states; outside them, the same question is answered by a different
+calculation.
+
+\paragraph{Transversality.} The paraxial estimate of Sec.~\ref{sec:geometry}
+leaves a longitudinal component $E_z\sim E_\perp/(kw_0)$ and a relative
+correction to the invariant of order $(kw_0)^{-2}$. For a waist of two
+wavelengths, $kw_0=4\pi\approx12.6$ and that correction is
+$6.3\times10^{-3}$; it falls below $10^{-2}$ for $kw_0\gtrsim10$, i.e.\ for
+waists wider than about $1.6\lambda$. At an $f/1$ focus $kw_0\sim1$ and the
+same expression is of order unity, so the transverse invariants no longer
+determine the local field, the yield functional of Eq.~\eqref{eq:yield}
+ceases to approximate the local rate, and the scaling lies outside the regime
+in which it is stated. Tight focusing used to reach the critical field with a
+single pulse is therefore not a more favourable configuration of this scheme
+but a separate calculation.
+
+\paragraph{Adiabaticity and the coherence budget.} The rate of
+Eq.~\eqref{eq:schwinger_rate} enters in its locally constant form, which
+requires the field to vary slowly on the tunnelling time. The controlling
+ratio is the adiabaticity parameter $\gamma\equiv m_e\omega/(eE)$ --- the ratio
+$\omega/(eE)$ of Sec.~\ref{sec:geometry} written in units of the electron mass
+--- equivalently the inverse of the dimensionless amplitude
+$a_0\equiv eE/(m_e\omega)$; neither is the rest-frame field $a$ of
+Eq.~\eqref{eq:ab}. Over the amplitudes reached here, $a_0$ runs from
+$1.7\times10^{2}$ to $6.8\times10^{2}$, so $\gamma$ runs from
+$5.9\times10^{-3}$ down to $1.5\times10^{-3}$: the pair-creation time
+$m_ec/(eE)$ is shorter than the optical period by a factor $2\pi a_0$, i.e.\
+by three to four orders of magnitude, and the field is locally static to
+better than one part in $10^{2}$ over the production time. Pulse length in
+cycles is thus not what limits the validity of
+Eq.~\eqref{eq:schwinger_rate}, and the margin widens with $N$, since at fixed
+total energy $a_0\propto\sqrt{N}$.
+
+The binding constraint is instead the coherence of the combining. If the $N$
+beams arrive with residual phase differences of rms $\sigma_\phi$, the
+coherent sum of Eq.~\eqref{eq:oneoverN} is partially randomised and the
+exponent $\beta$ fitted to the peak field as a function of $N$ falls below
+$1/2$: the acceptance band $0.45\le\beta\le0.55$ is left at
+$\sigma_\phi^\ast\simeq0.55~\mathrm{rad}$, about $0.09$ of an optical period,
+which for an $800~\mathrm{nm}$ driver is $\sigma_\phi^\ast\simeq0.24~
+\mathrm{fs}$ rms. This is a specification on the combining optics, not a
+defect of the model: it identifies the one quantity to which the result is
+sensitive, and with fully random phases the gain vanishes and no scaling
+remains to be tested.
 
 % ==================================================================
 \appendix
