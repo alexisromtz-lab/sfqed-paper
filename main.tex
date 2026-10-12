@@ -553,6 +553,27 @@ functional $\mathcal{N}$ of Eq.~\eqref{eq:yield}, which the benchmark does not
 evaluate; what the benchmark tests is that the platform integrates the same
 field that the paper optimises.
 
+\paragraph{End-to-end status of the platform.} The platform is exercised end
+to end, not only on the calibration geometry, by a closed cycle whose verdict
+and whose two free numbers are the ones reported here. On the production
+configuration that cycle returns five of five checks green, with the residual
+of the interior-boundary test equal to zero exactly rather than small,
+\(\eta_{H,\text{pml\_int}}=0.000000e+00\), and with the bulk spectral
+contamination at \(\kappa_{\mathrm{bulk}}=0.329479\), below the acceptance
+ceiling \(0.5\) that was fixed before the run. The artefacts behind those
+numbers are identified by the first sixteen hexadecimal digits of their
+SHA-256 digests: pre-registration \(895f424497caa97e\), runner
+\(c7de8f1143d62924\), raw output \(3d168e48c6714c96\).
+
+\paragraph{A prediction the measurement refuted.} The same pre-registration
+fixed a prior expectation for that last number,
+\(\kappa_{\mathrm{bulk}}<0.15\). The measurement did not confirm it: the
+realised value is \(0.329479\), above the predicted bound. The estimate is
+recorded as refuted and is not revised after the fact. What the ceiling
+\(0.5\) certifies is that the run lies inside the tolerance fixed in advance;
+it does not certify that the pre-registered estimate was right. The two
+statements are independent, and this text keeps them apart.
+
 \subsection{Domain of validity and practical constraints}
 
 The bounds collected here are part of the result rather than qualifications
