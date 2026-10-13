@@ -1,0 +1,168 @@
+{
+ "T_UTC": "2026-10-13T04:53:30Z",
+ "adjuncion": {
+  "D_escisura": [
+   0.0009545472729790422,
+   0.0002359015173194895,
+   5.8807759135567905e-05
+  ],
+  "D_identidad": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "banda_escisura": "ROJO SOBREPASO",
+  "operador_O1": {
+   "1": 1.0,
+   "2": 1.0,
+   "3": 1.0
+  },
+  "p_esc_121_241": 2.016631949369875,
+  "p_esc_241_481": 2.0041062751338026
+ },
+ "c_ord": {
+  "formas": {
+   "R1": [
+    61,
+    121
+   ],
+   "R2": [
+    121,
+    241
+   ]
+  },
+  "orden_adjunto_forzado_por_dimensiones": true,
+  "orden_inverso_definido": false,
+  "residuo_adjunto_gf_vs_fg": 0.0,
+  "residuo_diagramatico_vs_matricial": 0.0
+ },
+ "celda_2": {
+  "banda": "ROJO NO-MONOTONO",
+  "filas": [
+   {
+    "delta_en_nodos_pares": 0.0,
+    "delta_inf": 0.048943483704847024,
+    "h": 0.05,
+    "k": 1,
+    "nodo_max": 95,
+    "nodos_fino": 121,
+    "rho": 0.048943483704847024,
+    "x_max": 4.75
+   },
+   {
+    "delta_en_nodos_pares": 0.0,
+    "delta_inf": 0.01216008244756217,
+    "h": 0.025,
+    "k": 2,
+    "nodo_max": 231,
+    "nodos_fino": 241,
+    "rho": 0.01216008244756217,
+    "x_max": 5.775
+   },
+   {
+    "delta_en_nodos_pares": 0.0,
+    "delta_inf": 0.0030731634355594117,
+    "h": 0.0125,
+    "k": 3,
+    "nodo_max": 419,
+    "nodos_fino": 481,
+    "rho": 0.0030731634355594117,
+    "x_max": 5.237500000000001
+   }
+  ],
+  "p_121_241": 2.0089637828352562,
+  "p_241_481": 1.984356611722882
+ },
+ "falsador": {
+  "banda": "ROJO NO-SATURA",
+  "filas": [
+   {
+    "e_inf": 0.15643446504023883,
+    "h": 0.05,
+    "k": 1,
+    "nodos_fino": 121,
+    "rho": 0.16448493055873287
+   },
+   {
+    "e_inf": 0.07845909572784894,
+    "h": 0.025,
+    "k": 2,
+    "nodos_fino": 241,
+    "rho": 0.07845909572784894
+   },
+   {
+    "e_inf": 0.039259815759074154,
+    "h": 0.0125,
+    "k": 3,
+    "nodos_fino": 481,
+    "rho": 0.039259815759074154
+   }
+  ],
+  "p_121_241": 1.0679428031629985,
+  "p_241_481": 0.9988873054289255,
+  "residuo_ley_bajo_desfase": 0.0
+ },
+ "frente": "8.4 (fila 6: ley de composicion f* g* = (gf)*)",
+ "huella": "HUELLA-EVALUADOR-ADJUNTOS-TRES-MALLAS-20261013",
+ "instrumento": "sim/evaluador_adjuntos_tres_mallas.py",
+ "ley_composicion": {
+  "metrica": "identidad de operadores",
+  "residuo_A": 15.216904260722458,
+  "residuo_P": 1.9881707187556599,
+  "residuo_R": 0.0,
+  "vectores_de_prueba": 5
+ },
+ "no_hace": [
+  "no corre el solver",
+  "no toca instrumentos del repo",
+  "no escribe fuera de su crudo",
+  "no eleva (n=1)",
+  "no escribe p = 2 como resultado"
+ ],
+ "preregistro": {
+  "bandas": {
+   "GRIS": "1.90 <= p < 1.96 (pediria la 4a malla, nodos=961)",
+   "ROJO_NO_MONOTONO": "p3 < p2",
+   "ROJO_NO_SATURA": "p < 1.90",
+   "ROJO_SOBREPASO": "p >= 2.00",
+   "VERDE": "1.96 <= p < 2.00 y p3 >= p2",
+   "dicho": "heredadas del Frente 2 (PREREGISTRO_CONVERGENCIA_P_20261012 \u00a74); no se re-eligen"
+  },
+  "objeto": "la ley de composicion f* g* = (gf)* vista en el ARNES NUMERICO, sobre las tres mallas anidadas ya selladas",
+  "orden_adoptado": "X Y := X o Y (diagramatico); en codigo: aplicar(comp(X, Y), v) == X @ (Y @ v)",
+  "prediccion_2celda": "delta = u - P R u es el error de interpolacion lineal en los nodos IMPARES: |delta| = (h^2/8)|u''|, razon 4 por escalon => p = 2 EXACTO por construccion (no asintotico)",
+  "prediccion_escisura": "el defecto de escisura al nivel del emparejamiento mezcla el error de cuadratura de las DOS mallas => esperado O(h^2)",
+  "prediccion_falsador": "con nodos NO anidados (fino desfasado media malla fina) la ley de composicion sigue siendo exacta (es un corte de indices) pero la CONSISTENCIA cae a O(h)",
+  "prediccion_operador": "al nivel del OPERADOR el adjunto exacto NO es la interpolacion lineal: la discrepancia es estructural, O(1), sin tasa",
+  "prohibiciones": [
+   "no se escribe 'p = 2' como resultado: solo el par (p, C)",
+   "una identidad no es evidencia: el adjunto exacto y la ley de composicion de adjuntos son identidades de algebra; se declaran, no se adjudican",
+   "un defecto EXACTAMENTE cuadratico no es un objeto asintotico: si toca la banda superior, se declara el defecto de DOMINIO del umbral, no se baja el umbral",
+   "una salida que no puede diferir no es evidencia (los dos controles: nodos pares exactos, y el adjunto que anula el residuo)"
+  ]
+ },
+ "universo": {
+  "LADO": 6.0,
+  "anidamiento_exacto": true,
+  "h": [
+   0.1,
+   0.05,
+   0.025,
+   0.0125
+  ],
+  "lambda": 1.0,
+  "mallas": [
+   61,
+   121,
+   241,
+   481
+  ]
+ },
+ "veredicto": {
+  "adjuncion": "converge al nivel del emparejamiento (escisura O(h^2)); NO converge al nivel del operador (O(1))",
+  "celda_2": "cuadratica exacta por construccion; toca la banda superior por DOMINIO del umbral",
+  "falsador": "el desfase conserva la ley pero baja la consistencia a O(h): el anidamiento es la causa",
+  "ley_en_tres_mallas": "MEDIDA: exacta (residuo 0) para la restriccion por inyeccion; redondeo para interpolacion y adjunto",
+  "orden_de_adjuntos": "FORZADO por dimensiones, no elegido: el orden inverso no esta definido"
+ }
+}
