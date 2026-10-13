@@ -12,6 +12,8 @@
 %   3) Sistema de unidades declarado en cada ecuacion (naturales, hbar=c=1,
 %      salvo donde se diga lo contrario).
 % ------------------------------------------------------------------
+% PATCH: INTERSECCION-I1-I5-PARCHE-QUIRURGICO-20261013
+% ------------------------------------------------------------------
 \documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
 
 \usepackage{amsmath}
@@ -43,9 +45,10 @@ one: minimise the total input pulse energy subject to a prescribed pair yield.
 Three statements are established analytically. (i)~A single plane wave is a
 null field, $\mathcal{F}=\mathcal{G}=0$, and creates no pairs; pair creation is
 therefore a property of the \emph{collision} of fields, not of an individual
-pulse. (ii)~For $N$ phase-matched beams focused into a common volume at fixed
-total energy, the peak field scales as $\sqrt{N}$, so the energy required to
-reach a given invariant scales as $1/N$, under explicitly stated assumptions.
+pulse. (ii)~For $N$ phase-matched beams focused into a common interaction
+volume of fixed size, at fixed total energy, the peak field scales as
+$\sqrt{N}$, so the energy required to reach a given invariant scales as
+$1/N$, under explicitly stated assumptions.
 (iii)~The residual freedom is polarisation and temporal structure, which decide
 whether the strong-field region is oscillatory (counter-propagating linear
 standing wave) or quiescent (co-rotating circular collision); the quiescent
@@ -184,7 +187,24 @@ whose leading term is exponentially suppressed by $E_{\mathrm{cr}}/E$.
 For a slowly varying field the rate generalises through the \emph{locally
 constant field approximation} (LCFA): the local rate is
 $w=w(a(\mathbf{x},t))$, a function of the rest-frame field $a$ of
-Eq.~\eqref{eq:ab} evaluated pointwise. The number of pairs produced by a
+Eq.~\eqref{eq:ab} evaluated pointwise. The approximation carries two
+validity conditions, one temporal and one spatial, and both are stated
+here because the geometries of Sec.~\ref{sec:geometry} are admitted only
+inside them. The temporal condition is that the field be quasi-static over
+the tunnelling time, i.e.\ that the Keldysh parameter be small,
+$\gamma\equiv\omega/(\omega_{\mathrm{C}}a_0)=m_e\omega/(eE)=1/a_0\ll1$
+with $\omega_{\mathrm{C}}\equiv eE/m_e$ and
+$a_0\equiv eE/(m_e\omega)$, so that the pair is formed before the field
+reverses. The spatial condition is that the field be homogeneous on the
+scale of pair formation, i.e.\ that the reduced Compton wavelength
+$\lambda_{\mathrm{C}}\equiv\hbar/(m_ec)$ be small compared with the
+field's variation length $\lambda$,
+$k\lambda_{\mathrm{C}}=2\pi\lambda_{\mathrm{C}}/\lambda\simeq3.0\times10^{-6}\ll1$ for $\lambda=800$~nm, so that $a$ may be evaluated
+pointwise rather than along the pair trajectory. The two conditions are
+independent --- the first bounds the rate of temporal change, the second
+the rate of spatial change --- and both are met by the configurations of
+Sec.~\ref{sec:geometry}, which is what justifies the pointwise evaluation
+in Eq.~\eqref{eq:yield} below. The number of pairs produced by a
 spacetime field configuration is then the yield functional
 \begin{equation}
 \mathcal{N}[\{A_i^\mu\}]
@@ -301,10 +321,24 @@ rotating from purely electric at $kz=n\pi$ to purely magnetic at
 $kz=(n+\tfrac12)\pi$. Where the linear configuration gives the same peak but a
 field that crosses zero twice per period, the co-rotating circular
 configuration gives a \emph{quiescent} strong field that is stationary in
-time. Since the tunnelling rate \eqref{eq:schwinger_rate} depends on the field
-magnitude and the adiabaticity ratio $\omega/(eE)$, a strong-field region that
-does not cross zero in time is preferable for generating pairs from the
-vacuum. The two temporal profiles are compared in
+time. The preference is not qualitative, and it is worth showing why. At the
+common strong-field plane $kz=0$ the two configurations share the same peak
+rest-frame amplitude $a_{\max}=2E_0$, but sample it differently in time. In
+terms of the dimensionless rest-frame field $a$ measured in units of
+$E_{\mathrm{cr}}$, the leading term of Eq.~\eqref{eq:schwinger_rate} is
+$w(a)\propto a^{2}\exp(-\pi/a)$, strictly increasing on $a>0$ (so
+$w'(a)>0$) and convex ($w''(a)>0$), so that time spent below the peak is not
+recovered elsewhere in the cycle. The linear standing wave of
+Eq.~\eqref{eq:lin_inv} at $kz=0$ gives $a(t)=a_{\max}|\cos\omega t|$,
+which lies strictly below $a_{\max}$ except at the instants
+$\omega t=n\pi$; the co-rotating circular collision of
+Eq.~\eqref{eq:cp_inv} at $kz=n\pi$ gives $a(t)=a_{\max}$ at every
+instant. Hence $(1/T)\int_0^{T}w(a(t))\,dt<w(a_{\max})$, the inequality
+being strict because the set on which $|\cos\omega t|=1$ has measure zero.
+At equal peak field, and hence at equal threshold energy per beam, the
+co-rotating circular configuration maximises the yield integrated over a
+cycle: the preference follows from the monotonicity of the tunnelling rate,
+and is not an assumption. The two temporal profiles are compared in
 Fig.~\ref{fig:invariants}(a). This is a discrete geometric boundary condition
 on the polarisation, stated in Sec.~\ref{sec:bc}.
 
@@ -334,6 +368,29 @@ Setting the target field to the critical value, $E_\ast=E_{\mathrm{cr}}$, the
 input energy required to reach the pair-creation threshold falls as $1/N$
 relative to the threshold of a single beam.
 
+Two distinct scalings are in play and are kept apart here. The first is the
+\emph{peak-amplitude} threshold: to reach a prescribed peak field $E_\ast$
+in the common volume the total input energy is
+$\mathcal{E}_{\mathrm{in}}=\mathcal{E}_{\mathrm{ref}}/N$, so that at fixed
+$\mathcal{E}_{\mathrm{in}}$ the peak field grows as $\sqrt{N}$. The second
+is the \emph{integrated pair yield}, which does not scale as $N$: it is the
+functional \eqref{eq:yield} evaluated on the superposition, and at fixed
+peak field it depends on the spacetime geometry of the overlap --- the
+angular spread of the wavevectors and the resulting temporal profile of $a$
+--- rather than on the number of beams. Equation~\eqref{eq:oneoverN} is
+therefore a statement about the amplitude threshold, and it holds under a
+boundary condition that must be stated with it: the interaction volume
+$\Sigma\times\tau$ is \emph{common to all beams and invariant in $N$}.
+Each beam is taken paraxial and synchronised in phase at the focus, so that
+its energy is $\mathcal{E}_b=\kappa E_b^{2}$ with the \emph{same}
+$\kappa(\Sigma,\tau)$ for every beam, and the focus neither grows nor
+shifts as beams are added. If the volume were instead allowed to grow with
+$N$ --- a larger focal spot, a longer pulse, or an overlap region whose size
+scales with the number of beams --- the constant $\kappa$ of
+Eq.~\eqref{eq:oneoverN} would not be common, the $1/N$ factor would not
+follow, and the scaling would have to be re-derived for that particular
+geometry.
+
 The algebra here is that of coherent addition and is elementary; what the
 proposition establishes is that the linear-in-$N$ reduction of the threshold
 energy follows from vacuum superposition alone, with no further assumption
@@ -342,7 +399,11 @@ about the interaction. The assumptions are explicit and each is falsifiable:
 $F=\sum_i F_i$, valid below the pair-creation threshold; (ii)~perfect phase
 matching, i.e.\ path-length differences $\Delta L\ll\lambda$ across all beams;
 (iii)~a fixed, common focal volume $\Sigma\times\tau$; (iv)~no plasma formation
-during the rise, which would spoil the vacuum superposition. Practical limits
+during the rise, which would spoil the vacuum superposition; (v)~linear
+superposition, i.e.\ local fields well below $E_{\mathrm{cr}}$, so that the
+vacuum nonlinearity of Eq.~\eqref{eq:EH} is negligible. Assumptions (iii) and
+(iv) are quantified in Sec.~\ref{sec:discussion}, where they bound the useful
+$N$ from above. Practical limits
 --- the finite number of beams a chamber can accept, diffraction, optical
 damage, and the alignment tolerance quantified below --- bound the attainable
 $N$ and are the subject of Sec.~\ref{sec:discussion}.
@@ -494,9 +555,13 @@ different points. Away from the focus the longitudinal components dephase
 while the transverse ones survive, so $\max|\mathbf{E}|$ grows faster than
 $\max a$ and $R$ remains below unity.
 
-\paragraph{Numerical value.} Evaluating Eq.~\eqref{eq:ratio} on the closed
-form of Eq.~\eqref{eq:focus_cone} for $N=4$, by scanning a cubic region of
-side $6\lambda$ centred on the focus with a beam waist $w_0=2\lambda$, gives
+\paragraph{Numerical value.} The figures below are obtained by numerical
+quadrature of the closed form of Eq.~\eqref{eq:focus_cone} over a discrete
+three-dimensional mesh, not by an analytic reduction: the ratio
+Eq.~\eqref{eq:ratio} is evaluated at the nodes of the mesh and both maxima
+are taken over the sampled region. The mesh is a cube of side $6\lambda$
+centred on the focus, of uniform resolution $\Delta x=\lambda/32$, with a
+beam waist $w_0=2\lambda$. For $N=4$, this gives
 \begin{equation}
 \begin{split}
 R(\alpha=\arctan\tfrac12=26.5651^\circ)&=0.7125,\\
@@ -622,6 +687,25 @@ which for an $800~\mathrm{nm}$ driver is $\sigma_\phi^\ast\simeq0.24~
 defect of the model: it identifies the one quantity to which the result is
 sensitive, and with fully random phases the gain vanishes and no scaling
 remains to be tested.
+
+\paragraph{Upper bound on $N$.} The reduction of Eq.~\eqref{eq:oneoverN} is
+a statement about the \emph{linear} superposition of Maxwell fields, and
+linear superposition has two failure modes that bound the useful $N$ from
+above. Both are physical, and both are calculable departures rather than
+assumptions. The first is vacuum nonlinearity: the coherent sum
+$F=\sum_iF_i$ neglects the elastic photon--photon coupling of
+Eq.~\eqref{eq:EH}, whose relative weight against the Maxwell term grows as
+$(\alpha/45\pi)(a/E_{\mathrm{cr}})^{2}$ --- of order $10^{-5}$ at the
+critical field, negligible over the amplitudes reached here, but nonzero and
+the leading departure from linearity. The second is back-reaction from the
+pairs that are created: once the pair density $n_{e^\pm}$ approaches the
+critical density, defined by $\omega_{p,e}=\omega$ with
+$\omega_{p,e}=\sqrt{n_{e^\pm}e^{2}/m_e}$, the created plasma screens the
+focus, refracts the beams and interrupts the coherent addition before the
+peak field of Eq.~\eqref{eq:oneoverN} is reached. The two effects place a
+ceiling on the peak field that coherent addition can sustain, and therefore
+an upper bound on the useful $N$ at fixed interaction volume: the scheme
+operates in the window between the yield threshold and that ceiling.
 
 % ==================================================================
 \appendix
