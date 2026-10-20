@@ -35,11 +35,18 @@
 | `tools/sello.sh` | la línea atómica (`VEREDICTO · RC · MOTOR · SHA16`) y el crudo a disco | *nuevo 2026-10-11* |
 | `main.tex` | el manuscrito | 514 l · 26 014 B · `6cd0f0803b61a3a5` · ` M` (otra mano) |
 | `README.md` | entrada del repo | 12 473 B |
-| `METHODOLOGY_AND_BOUNDARIES.md` | método y fronteras declaradas | 15 393 B |
+| `METHODOLOGY_AND_BOUNDARIES.md` | método y fronteras declaradas | **publicada 2026-10-20** · ventana propia: 261 l · 15 577 B · `ca7578850989c48d` |
 | `refs.bib` | bibliografía | 3 694 B |
 | `lint_tex.py` | linter del manuscrito | 4 481 B |
 | `.gitleaks.toml` | reglas de la casa para el gate de custodia | 5 381 B |
 | `sfqed-paper-zenodo-20261010.tar.gz` | el tarball depositado | 340 248 B |
+
+<!-- HUELLA-INDEX-METHODOLOGY-MEDIDO-20261020 -->
+> **Frontera re-medida (2026-10-20T23:12Z, HTTP anónimo sobre `main`).** De las piezas de esta
+> tabla: `README.md` **existe pero no es la declarada** (la de 12 473 B describía qué declara y qué
+> no el trabajo, y ese texto no está); `METHODOLOGY_AND_BOUNDARIES.md` **existe** con la identidad
+> anotada arriba y declara sus propias fronteras; el `tar.gz` de 340 248 B sigue **404**. Las demás
+> cifras de la tabla son la ventana 2026-10-11 y **no** se re-midieron aquí.
 
 ---
 

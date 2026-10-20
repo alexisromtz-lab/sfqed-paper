@@ -1,6 +1,6 @@
 # sfqed-paper — el papel, su aparato de medida y la custodia del bundle
 
-> **EN —** A paper plus its **measuring apparatus**: a 26-file verifiable bundle, a one-command gate,
+> **EN —** A paper plus its **measuring apparatus**: a 35-file verifiable bundle, a one-command gate,
 > a three-valued verdict (`0` VERDE / `1` FRACTURA / `2` CONTRATO ROTO), a 7-case *must-fail* bench that
 > measures the verifier **from outside**, and a declared list of what is **not** sealed.
 
@@ -19,16 +19,18 @@ lo protege**. La distinción es la que permite que un verificador **no se valide
 | el depósito | [`ZENODO_DEPOSITO_CAMPOS_20261010.md`](ZENODO_DEPOSITO_CAMPOS_20261010.md) |
 | la salud del bundle | [`BUNDLE_VERIFICATION_REPORT_20261011.md`](BUNDLE_VERIFICATION_REPORT_20261011.md) |
 
-## `bundle/` = el aparato de medida (26 archivos)
+## `bundle/` = el aparato de medida (35 archivos)
 
-`UNIVERSO DECLARADO` por el propio verificador: **26 archivos = 25 declarados en `HASHES.sha256` + el
-manifiesto**. No es `sim/`: es el aparato.
+`UNIVERSO DECLARADO` por el propio verificador: **35 archivos = 34 declarados en `HASHES.sha256` + el
+manifiesto**. No es `sim/`: es el aparato. (Medido 2026-10-20; las cifras de esta sección son la
+ventana viva del gate, que las imprime en cada corrida. Ver
+[`METHODOLOGY_AND_BOUNDARIES.md`](METHODOLOGY_AND_BOUNDARIES.md) §4.)
 
 | pieza | qué es |
 |---|---|
 | `bundle/verificar.sh` | el gate de un comando, 4 etapas: `[1]` medidor · `[2]` integridad · `[3]` custodia · `[4]` anclas |
 | `bundle/HASHES.sha256` | el manifiesto (no puede declararse a sí mismo) |
-| `bundle/actas/` | 10 piezas: lecturas contra, auditoría del orden FDTD, entrega a la pestaña vecina, veredicto del control pareado |
+| `bundle/actas/` | 15 piezas: lecturas contra, auditoría del orden FDTD, entrega a la pestaña vecina, veredicto del control pareado |
 | `bundle/preregistros/` | 3 piezas: `PREREGISTRO_KERR`, `PREREGISTRO_SIGMA_PHI`, `PROTOCOLO_1overN` |
 | `bundle/instrumentos/medidores/` | `falsador.py`, `maxwell2d.py` |
 | `bundle/instrumentos/custodia/` | `gitleaks_casa.toml`, `pre-commit`, `pre-push`, `install.sh` |
@@ -38,7 +40,7 @@ manifiesto**. No es `sim/`: es el aparato.
 ilegible; incluye el manifiesto de 0 entradas, que se satisfaría solo: `0 + 0 == 0`). Un verificador
 que no sabe decir "no puedo medir" es un verificador ciego.
 
-## `sim/` = el laboratorio (110 archivos)
+## `sim/` = el laboratorio (47 archivos)
 
 | pieza | qué es |
 |---|---|
@@ -70,20 +72,24 @@ Fuente: [`MOTORES.md`](MOTORES.md) §6.
 
 Ninguno de estos cuatro es un detalle: son la frontera explícita del trabajo, y por eso están escritos.
 
-## Deuda declarada (medida 2026-10-20)
+<!-- HUELLA-README-CUENTAS-MEDIDAS-20261020 -->
 
-El propio `INDEX.md` §1 lista tres piezas que **hoy no existen en el repositorio** — medida por
-`gh api` sobre `main`, código HTTP `404`:
+## Deuda declarada (re-medida 2026-10-20T23:12Z)
+
+El propio `INDEX.md` §1 lista tres piezas que **no existían en el repositorio** — medida por HTTP
+anónimo sobre `main`:
 
 | pieza declarada en `INDEX.md` §1 | tamaño declarado | estado medido |
 |---|---|---|
-| `README.md` | 12 473 B | **404** |
-| `METHODOLOGY_AND_BOUNDARIES.md` | 15 393 B | **404** |
+| `README.md` | 12 473 B | `200` — existe un README **nuevo**; **no** es la pieza declarada |
+| `METHODOLOGY_AND_BOUNDARIES.md` | 15 393 B | `200` — **publicada** el 2026-10-20 (identidad en el mensaje de commit; **no** se rellenó hasta 15 393 B) |
 | `sfqed-paper-zenodo-20261010.tar.gz` | 340 248 B | **404** |
 
-**Se declaran; no se reconstruyen por conveniencia.** Este `README.md` es nuevo y **no** sustituye al
-que el índice declaraba: aquel describía "qué declara y qué no declara el trabajo", y esa pieza sigue
-pendiente de publicarse. Un índice que apunta a un hueco es un dato, no un adorno.
+**Se declaran; no se reconstruyen por conveniencia.** De las tres, **una** se cerró escribiendo la
+pieza (`METHODOLOGY_AND_BOUNDARIES.md`, que declara su propia frontera en §8); las otras dos siguen
+abiertas: el `README.md` que el índice declaraba describía "qué declara y qué no declara el trabajo",
+y ese texto **no existe** — el de hoy es otro, y lo dice. Un índice que apunta a un hueco es un dato,
+no un adorno.
 
 ## Licencia y citación
 

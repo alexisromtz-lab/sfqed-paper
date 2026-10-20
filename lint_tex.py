@@ -83,12 +83,23 @@ if sin_citar:
     rojos.append("ENTRADAS sin citar: " + ", ".join(sin_citar))
 
 # ---------------- (5) meta-lenguaje ----------------
+# HUELLA-LINT-TEX-FRONTERA-20261020
+# Medido 2026-10-20: low.count("gate") contaba "aggregate" (main.tex:604,
+# "aggregate quantity") y publicaba ROJO gate=1 sobre prosa legitima. El conteo
+# exige ahora frontera: ni letra, ni digito, ni guion bajo junto a la palabra.
 meta = ["sello", "UNIVERSO DECLARADO", "acta", "corpus", "mesa/", "sha16",
         "boolean", "gate", "expediente", "particion", "PARTICIONADOR"]
+
+
+def golpes_de(texto, palabra):
+    patron = r"(?<![a-z0-9_])" + re.escape(palabra.lower()) + r"(?![a-z0-9_])"
+    return len(re.findall(patron, texto))
+
+
 golpes = []
 low = body.lower()
 for w in meta:
-    n = low.count(w.lower())
+    n = golpes_de(low, w)
     if n:
         golpes.append(f"{w}={n}")
 if golpes:
@@ -118,3 +129,7 @@ print("ROJOS: " + ("NINGUNO" if not rojos else str(len(rojos))))
 for r in rojos:
     print("  ROJO " + r)
 print("VEREDICTO: " + ("estructura limpia" if not rojos else "hay rojos, ver arriba"))
+# HUELLA-LINT-TEX-EXIT-20261020
+# Hasta hoy el linter imprimia "hay rojos" y salia con RC 0: su rojo no podia
+# enrojecer nada (medido: ROJOS: 1 -> RC 0). El veredicto viaja en el RC.
+raise SystemExit(1 if rojos else 0)
