@@ -1,9 +1,13 @@
 # HUELLA-APPARATUS-sfqed-paper-20261020
-# Aparato declarado: este repo no tiene test_*.py. Su aparato son dos piezas del
-# README y se corren las dos, en este orden:
-#   1. bundle/tests/bench_must_fail.sh — 7 casos que miden al verificador DESDE FUERA
-#      (un verificador no se valida a si mismo).
-#   2. bundle/verificar.sh — el gate del objeto: medidor, integridad, custodia, anclas.
-# El `&&` no es adorno: si el banco no conforma, el gate del objeto no se corre y el
-# job enrojece. Baseline local medido (2026-10-20): banco 7/7 RC=0 · verificar RC=0.
-sh bundle/tests/bench_must_fail.sh && sh bundle/verificar.sh
+# HUELLA-APPARATUS-sfqed-paper-V2-20261020
+# Aparato declarado: este repo no tiene test_*.py. Su aparato es el banco
+# must-fail de 7 casos, que mide al verificador DESDE FUERA (un verificador no
+# se valida a si mismo) y es autocontenido: fabrica sus propios shims.
+#
+# LIMITE DECLARADO (medido, no supuesto): bundle/verificar.sh NO se corre aqui.
+# Requiere el binario externo `gitleaks`; en un runner desnudo devuelve RC=2
+# «CONTRATO ROTO: binario gitleaks ausente» — su contrato, no un fallo suyo.
+# Run 39508017846 (2026-10-20): banco 7/7 VERDE y verificar.sh RC=2 por gitleaks
+# ausente. Se mide donde el binario existe (local, gitleaks 8.30.1); en CI queda
+# NO MEDIDO y se dice, en vez de rebajar el gate a verde.
+sh bundle/tests/bench_must_fail.sh
