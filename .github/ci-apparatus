@@ -1,0 +1,9 @@
+# HUELLA-APPARATUS-sfqed-paper-20261020
+# Aparato declarado: este repo no tiene test_*.py. Su aparato son dos piezas del
+# README y se corren las dos, en este orden:
+#   1. bundle/tests/bench_must_fail.sh — 7 casos que miden al verificador DESDE FUERA
+#      (un verificador no se valida a si mismo).
+#   2. bundle/verificar.sh — el gate del objeto: medidor, integridad, custodia, anclas.
+# El `&&` no es adorno: si el banco no conforma, el gate del objeto no se corre y el
+# job enrojece. Baseline local medido (2026-10-20): banco 7/7 RC=0 · verificar RC=0.
+sh bundle/tests/bench_must_fail.sh && sh bundle/verificar.sh
