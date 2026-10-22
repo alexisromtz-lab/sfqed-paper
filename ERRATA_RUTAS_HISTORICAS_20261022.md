@@ -4,13 +4,18 @@
 
 ## Alcance
 
-Se registran cuatro referencias absolutas al entorno de ejecución original, conservadas en tres artefactos del repositorio:
+Se registran dos clases de referencias absolutas al entorno de ejecución original:
 
-- `bundle/instrumentos/medidores/fuego_pestana2_20261011.py:36`: `/Users/marlene/sfqed-paper/sim`.
-- `sim/evaluador_adjuntos_tres_mallas.py:31,48`: referencia a `sim/data/invariantes/adjuntos_tres_mallas_20261013.json`.
-- `sim/n3_fasores_20261011.py:58`: `/Users/marlene/sfqed-paper`.
+- **Sanitizadas el 2026-10-22** (commit `1d7b45b`): `sim/n3_fasores_20261011.py:58` y
+  `sim/evaluador_adjuntos_tres_mallas.py:31,48` anclan ahora la raíz al propio módulo
+  (`Path(__file__).resolve().parents[1]`). La ruta del entorno ya no aparece en el código.
+- **Conservada** en `bundle/instrumentos/medidores/fuego_pestana2_20261011.py:36`, que pertenece al
+  bundle sellado por `bundle/HASHES.sha256`: reescribirla rompería `tools/verificar_bundle.sh`.
 
-Estos contenidos se preservan sin reescritura retroactiva. Para reproducirlos en otro checkout, la raíz histórica `/Users/marlene/sfqed-paper` se interpreta como la raíz local del repositorio (`$SFQED_ROOT`); se conserva el sufijo relativo de cada referencia. Esta equivalencia documenta la portabilidad del contexto, no garantiza por sí sola la existencia de cada archivo referenciado.
+Para reproducir los artefactos históricos en otro checkout, toda referencia a
+`/Users/<usuario>/sfqed-paper` se interpreta como la raíz local del repositorio (`$SFQED_ROOT`), conservando
+el sufijo relativo de cada referencia. Esta equivalencia documenta la portabilidad del contexto, no garantiza
+por sí sola la existencia de cada archivo referenciado.
 
 ## Adjudicación de rutas relativas
 
