@@ -28,7 +28,7 @@ QUE NO HACE
   No escribe "p = 2" como resultado: publica el par (p, C).
 
 ESCRITURA (unica)
-  /Users/marlene/sfqed-paper/sim/data/invariantes/adjuntos_tres_mallas_20261013.json
+  sim/data/invariantes/adjuntos_tres_mallas_20261013.json (relativa a la raiz del repo)
 """
 
 import json
@@ -44,9 +44,7 @@ LAMBDA = 1.0
 NODOS = [60 * 2 ** k + 1 for k in range(4)]      # 61 121 241 481
 H = [LADO / (n - 1) for n in NODOS]              # 0.1 0.05 0.025 0.0125
 
-CRUDO = pathlib.Path(
-    "/Users/marlene/sfqed-paper/sim/data/invariantes/adjuntos_tres_mallas_20261013.json"
-)
+CRUDO = pathlib.Path(__file__).resolve().parents[1] / "sim" / "data" / "invariantes" / "adjuntos_tres_mallas_20261013.json"
 
 # ---------------------------------------------------------------------------
 # 0. PRE-REGISTRO -- se imprime ANTES de cualquier cifra

@@ -55,7 +55,7 @@ import sys
 import time
 from pathlib import Path
 
-RAIZ = Path("/Users/marlene/sfqed-paper")
+RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ / "sim"))
 
 import numpy as np          # noqa: E402
